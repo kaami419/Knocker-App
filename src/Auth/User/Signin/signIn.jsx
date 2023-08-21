@@ -15,12 +15,15 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 // import { NavLink } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const defaultTheme = createTheme();
 
 export default function UserSignin() {
-    const [formData, setFormData] = useState({ email: '', password: '' });
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: '', password: '' });
   
     const handleChange = (event) => {
       const { name, value } = event.target;
@@ -50,6 +53,8 @@ export default function UserSignin() {
             const token = response.data.token;
             localStorage.setItem('token', token);
             console.log('Sign-in successful');
+
+            navigate('/')
           } else {
             console.error('Sign-in failed');
           }

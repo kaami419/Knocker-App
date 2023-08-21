@@ -16,12 +16,13 @@ import { NavLink } from 'react-router-dom';
 import './signUp.css'
 import axios from 'axios';
 import StickyHeadTable from '../../../DashBoard/Table/Table';
-
+import { useNavigate } from 'react-router-dom';
 
 
 const defaultTheme = createTheme();
 
 export default function UserSignUp() {
+  const navigate= useNavigate()
   const [table, setTable] = React.useState(false);
   const token = localStorage.getItem('token');
 
@@ -51,6 +52,7 @@ export default function UserSignUp() {
         }
       });
       console.log('API Response:', response.data);
+      navigate('/')
     } catch (error) {
       console.error('API Error:', error);
       
@@ -59,7 +61,8 @@ export default function UserSignUp() {
 
   return (
     <div>
-      {table? <StickyHeadTable/>
+      {table? 
+      <StickyHeadTable/>
       :
     <ThemeProvider theme={defaultTheme}>
                    <div className='createKnockerPageBtnsDiv'>
