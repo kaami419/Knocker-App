@@ -1,7 +1,15 @@
 .navbarbutton{
     padding: .5rem 1rem ;
+    color: #1565c0 ;
 }
 .navbarbutton2{
     padding: .5rem 1rem ;
     margin-left: .5rem;
+    color: #1565c0 ;
 }
+
+.navbarbutton2:hover {
+    /* opacity: 50%; */
+    background-color: transparent;
+    color: white;
+  }

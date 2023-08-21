@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+// import { useState } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -9,34 +10,23 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
+// import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Link from '@mui/material/Link';
+// import Paper from '@mui/material/Paper';
+// import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+// import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
-import Chart from '../DashBoard/Chart';
-import Deposits from '../DashBoard/Deposits';
-import Orders from '../DashBoard/Orders';
+// import Chart from '../DashBoard/Chart';
+// import Deposits from '../DashBoard/Deposits';
+// import Orders from '../DashBoard/Orders';
 import { thirdListItems } from './listItems';
 import './dashboard.css'
 import { NavLink } from 'react-router-dom';
+import StickyHeadTable from './Table/Table';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const drawerWidth = 240;
 
@@ -84,15 +74,23 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-// TODO remove, this demo shouldn't need to reset the theme.
+
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
+
   const [open, setOpen] = React.useState(true);
+  
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    // localStorage.removeItem('user')
+  };
+
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: 'flex' }}>
@@ -124,11 +122,9 @@ export default function Dashboard() {
             >
               Dashboard
             </Typography>
-            <NavLink to={'./UserSignup'}>
-           <button className='navbarbutton'>Create Knocker</button>
-           </NavLink>
+
            <NavLink to={'./UserSignin'}>
-           <button className='navbarbutton2'>Logout</button>
+           <button className='navbarbutton2' onClick={handleLogout}>Logout</button>
            </NavLink>
           </Toolbar>
         </AppBar>
@@ -167,16 +163,13 @@ export default function Dashboard() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="xl" sx={{ mt: 6, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* Recent Orders */}
               <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
-                </Paper>
+                <StickyHeadTable/>
               </Grid>
             </Grid>
-            {/* <Copyright sx={{ pt: 4 }} /> */}
+          
           </Container>
         </Box>
       </Box>

@@ -1,18 +1,36 @@
 .createKnockerPageBtnsDiv {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   width: 100%;
+ 
+  /* border: 1px solid red; */
 }
 
 .gotoDashboard {
   padding: 0.5rem 1rem;
   background-color: #1565c0;
-  border-style: none;
+  /* border-style: none; */
   color: white;
   cursor: pointer;
+  margin-left: 1rem;
+  /* border-radius: .5rem; */
   
 }
 
 .gotoDashboard:hover {
-  opacity: 50%;
+  /* opacity: 50%; */
+  background-color: white;
+  color: #1565c0;
+}
+
+
+.createKnockerBtn:hover{
+  /* background-color: white; */
+  color: black;
+
+}
+
+.signUpContainer{
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.27) 0px 3px 8px;
 }

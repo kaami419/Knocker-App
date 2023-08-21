@@ -1,0 +1,22 @@
+.tableBtnDiv{
+margin-top: 1rem;
+
+ display: flex;
+ justify-content:right;
+/* border: 1px solid red; */
+width: 100%;
+}
+
+.tableBtn{
+    padding: .5rem 1rem ;
+    background-color: #1565c0 ;
+    color: white;
+    margin-inline-end: 4rem;
+}
+
+.tableBtn:hover{
+    color: #1565c0 ;
+    background-color: transparent;
+    /* padding: .5rem 1rem ; */
+    
+}

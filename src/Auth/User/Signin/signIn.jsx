@@ -13,26 +13,11 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { NavLink } from 'react-router-dom';
+// import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 
-function Copyright(props) {
-    
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const defaultTheme = createTheme();
-
-
 
 export default function UserSignin() {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -59,12 +44,13 @@ export default function UserSignin() {
               },
             }
           );
+          console.log("data", response.data.user.email)
       
           if (response.status === 200) {
-            // Handle successful sign-in (redirect, set token in state, etc.)
+            const token = response.data.token;
+            localStorage.setItem('token', token);
             console.log('Sign-in successful');
           } else {
-            // Handle sign-in failure (show error message, etc.)
             console.error('Sign-in failed');
           }
         } catch (error) {
@@ -82,7 +68,7 @@ export default function UserSignin() {
            sm={4}
            md={7}
         sx={{
-           backgroundImage: 'url(https://images.unsplash.com/photo-1476610182048-b716b8518aae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTIzNTg3ODI&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080)',
+           backgroundImage: 'url(https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTI2MDU3OTA&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080)',
            backgroundRepeat: 'no-repeat',
              backgroundColor: (t) =>
                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -100,11 +86,11 @@ export default function UserSignin() {
                 alignItems: 'center',
               }}
             >
-              <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <Avatar sx={{ m: 1, bgcolor: '#1565c0' }}>
                 <LockOutlinedIcon />
               </Avatar>
-              <Typography component="h1" variant="h5">
-                Sign in
+              <Typography component="h1" variant="h5" style={{color:"#1565c0"}}>
+                Admin Sign in
               </Typography>
               <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
                 <TextField
@@ -135,7 +121,9 @@ export default function UserSignin() {
                   control={<Checkbox value="remember" color="primary" />}
                   label="Remember me"
                 />
+                {/* <NavLink to={'/'}> */}
                 <Button
+                // onClick={handleSubmit}
                   type="submit"
                   fullWidth
                   variant="contained"
@@ -143,17 +131,19 @@ export default function UserSignin() {
                 >
                   Sign In
                 </Button>
+                {/* </NavLink> */}
+
                 <Grid container>
                   <Grid item xs>
                     <Link href="#" variant="body2">
                       Forgot password?
                     </Link>
                   </Grid>
-                  <Grid item>
-                    <NavLink to={'/UserSignup'} variant="body2" style={{textDecorationColor: 'rgba(25, 118, 210, 0.4)',color: '#1976d2'}}>
+                  {/* <Grid item>
+                    <NavLink to={'/'} variant="body2" style={{textDecorationColor: 'rgba(25, 118, 210, 0.4)',color: '#1976d2'}}>
                       {"Don't have an account? Sign Up"}
                     </NavLink>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
                 {/* <Copyright sx={{ mt: 5 }} /> */}
               </Box>
