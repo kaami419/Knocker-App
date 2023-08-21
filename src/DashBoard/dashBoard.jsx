@@ -19,13 +19,15 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
-// import Chart from '../DashBoard/Chart';
-// import Deposits from '../DashBoard/Deposits';
-// import Orders from '../DashBoard/Orders';
 import { thirdListItems } from './listItems';
 import './dashboard.css'
 import { NavLink } from 'react-router-dom';
 import StickyHeadTable from './Table/Table';
+import PreRegisterationTable from './Table/PreRegisterationTable';
+import AreaTable from './Table/AreaTable';
+import { useNavigate } from 'react-router-dom';
+
+
 
 
 const drawerWidth = 240;
@@ -74,16 +76,25 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
+  const navigate = useNavigate()
+
 
   const [open, setOpen] = React.useState(true);
+  const [selectedComponent, setSelectedComponent] = React.useState('table'); 
   
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const handleSidebarItemClick = (componentName) => {
+    setSelectedComponent(componentName);
+    // navigate(`/${componentName}`)
+    
+  };
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -129,6 +140,8 @@ export default function Dashboard() {
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
+       
+         
           <Toolbar
             sx={{
               display: 'flex',
@@ -143,11 +156,11 @@ export default function Dashboard() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
+          {mainListItems(handleSidebarItemClick)}
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            {secondaryListItems(handleSidebarItemClick)}
             <Divider sx={{ my: 1 }} />
-            {thirdListItems}
+            {thirdListItems(handleSidebarItemClick)}
           </List>
         </Drawer>
         <Box
@@ -166,7 +179,10 @@ export default function Dashboard() {
           <Container maxWidth="xl" sx={{ mt: 6, mb: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <StickyHeadTable/>
+                
+                 {selectedComponent === 'table' && <StickyHeadTable />}
+                {selectedComponent === 'pre-registration' && <PreRegisterationTable />}
+                {selectedComponent === 'area' && <AreaTable />}
               </Grid>
             </Grid>
           

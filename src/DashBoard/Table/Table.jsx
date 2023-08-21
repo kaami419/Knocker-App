@@ -166,10 +166,10 @@ export default function StickyHeadTable() {
   const [knocker, setKnocker] = React.useState(false);
   const [data, setData] = React.useState([]); // State to hold the fetched data
   const [columns, setColumns] = React.useState([]); // State to hold the dynamic columns
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjkyMjU5NzgxfQ.pToIKrBNH-NCYKj286_At-cIHs3VRtllS-X9snoS-r0";
+  const token = localStorage.getItem('token');
 
   React.useEffect(() => {
-    // Fetch data from the API
+   
     axios.get('http://192.168.100.18:3001/api/knocker/get/all', {
       headers: {
         Authorization: `Bearer ${token}`
@@ -177,7 +177,7 @@ export default function StickyHeadTable() {
     })
       .then(response => {
         const fetchedData = response.data.data;
-        setData(fetchedData); // Update state with fetched data
+        setData(fetchedData); 
         console.log("fetchedData:",fetchedData );
         
         if (fetchedData.length > 0) {
@@ -187,7 +187,7 @@ export default function StickyHeadTable() {
             minWidth: 170,
             align: 'left',
           }));
-          setColumns(dynamicColumns); // Update state with dynamic columns
+          setColumns(dynamicColumns);
         }
       })
       .catch(error => {

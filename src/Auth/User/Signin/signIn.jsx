@@ -16,6 +16,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 // import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
 
 
 
@@ -24,6 +29,19 @@ const defaultTheme = createTheme();
 export default function UserSignin() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [openModal, setOpenModal] = React.useState(false);
+const [modalTitle, setModalTitle] = React.useState('');
+const [modalContent, setModalContent] = React.useState('');
+
+const handleModalClose = () => {
+  setOpenModal(false);
+};
+
+const handleModalOpen = (title, content) => {
+  setModalTitle(title);
+  setModalContent(content);
+  setOpenModal(true);
+};
   
     const handleChange = (event) => {
       const { name, value } = event.target;
@@ -52,18 +70,21 @@ export default function UserSignin() {
           if (response.status === 200) {
             const token = response.data.token;
             localStorage.setItem('token', token);
+            handleModalOpen('Success', 'Sign-in successful.');
             console.log('Sign-in successful');
-
             navigate('/')
           } else {
             console.error('Sign-in failed');
+            handleModalOpen('Error', 'Sign-in failed. Please check your credentials.');
           }
         } catch (error) {
           console.error('Error occurred during sign-in:', error);
+          handleModalOpen('Error', 'An error occurred during sign-in. Please try again later.');
         }
       };
   
     return (
+
       <ThemeProvider theme={defaultTheme}>
         <Grid container component="main" sx={{ height: '100vh' }}>
           <CssBaseline />
@@ -155,7 +176,23 @@ export default function UserSignin() {
             </Box>
           </Grid>
         </Grid>
+        <Dialog
+  open={openModal}
+  onClose={handleModalClose}
+  aria-labelledby="modal-title"
+>
+  <DialogTitle id="modal-title">{modalTitle}</DialogTitle>
+  <DialogContent>
+    <DialogContentText>{modalContent}</DialogContentText>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleModalClose} color="primary" autoFocus>
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
       </ThemeProvider>
+      
     );
   }
 

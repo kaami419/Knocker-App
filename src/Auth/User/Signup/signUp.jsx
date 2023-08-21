@@ -17,6 +17,11 @@ import './signUp.css'
 import axios from 'axios';
 import StickyHeadTable from '../../../DashBoard/Table/Table';
 import { useNavigate } from 'react-router-dom';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
 
 
 const defaultTheme = createTheme();
@@ -25,13 +30,34 @@ export default function UserSignUp() {
   const navigate= useNavigate()
   const [table, setTable] = React.useState(false);
   const token = localStorage.getItem('token');
+  const [firstNameError, setFirstNameError] = React.useState("");
+  const [lastNameError, setLastNameError] = React.useState("");
+  const [userNameError, setUserNameError] = React.useState("");
+  const [userTypeError, setUserTypeError] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState("");
+  const [phoneError, setPhoneError] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [openModal, setOpenModal] = React.useState(false);
+  const [modalTitle, setModalTitle] = React.useState('');
+  const [modalContent, setModalContent] = React.useState('');
+
+  const handleModalClose = () => {
+    setOpenModal(false);
+  };
+
+  const handleModalOpen = (title, content) => {
+    setModalTitle(title);
+    setModalContent(content);
+    setOpenModal(true);
+  };
 
  
   
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("token",token);
+    // console.log("token",token);
     
     const data = new FormData(event.currentTarget);
   
@@ -44,6 +70,56 @@ export default function UserSignUp() {
       userName: data.get('userName'),
       userType: data.get('userType')
     };
+
+    if (!formData.firstName) {
+      setFirstNameError("First Name is required.");
+    } else {
+      setFirstNameError("");
+    }
+    if (!formData.lastName) {
+      setLastNameError("Last Name is required.");
+    } else {
+      setLastNameError("");
+    }
+    if (!formData.userName) {
+      setUserNameError("User Name is required.");
+    } else {
+      setUserNameError("");
+    }
+    if (!formData.userType) {
+      setUserTypeError("User Type is required.");
+    } else {
+      setUserTypeError("");
+    }
+    if (!formData.email) {
+      setEmailError("Email is required.");
+    } else {
+      setEmailError("");
+    }
+    if (!formData.password) {
+      setPasswordError("Password is required.");
+    } else {
+      setPasswordError("");
+    }
+    if (!formData.phone) {
+      setPhoneError("Phone Number is required.");
+    } else {
+      setPhoneError("");
+    }
+
+    
+    if (
+      firstNameError &&
+      lastNameError &&
+      userNameError &&
+      userTypeError &&
+      emailError &&
+      passwordError &&
+      phoneError
+    ) {
+      setErrorMessage("Please fill in all required fields.");
+      return; 
+    }
   
     try {
       const response = await axios.post('http://192.168.100.18:3001/api/admin/create/user', formData,{
@@ -52,9 +128,17 @@ export default function UserSignUp() {
         }
       });
       console.log('API Response:', response.data);
+      handleModalOpen('Success', 'Knocker created successfully.');
       navigate('/')
     } catch (error) {
       console.error('API Error:', error);
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message); 
+        handleModalOpen('Error', error.response.data.message);
+      } else {
+        setErrorMessage("An error occurred. Please try again later."); 
+        handleModalOpen('Error', 'An error occurred. Please try again later.');
+      }
       
     }
   };
@@ -97,6 +181,7 @@ export default function UserSignUp() {
                   label="First Name"
                   autoFocus
                 />
+                  {firstNameError && <Typography variant="body2" color="error">{firstNameError}</Typography>}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -107,6 +192,7 @@ export default function UserSignUp() {
                   name="lastName"
                   autoComplete="family-name"
                 />
+                {lastNameError && <Typography variant="body2" color="error">{lastNameError}</Typography>}
               </Grid>
               <Grid item xs={12} sm={6}>
               <TextField
@@ -119,6 +205,7 @@ export default function UserSignUp() {
                 id="userName"
                 autoComplete="current-userName"
               />
+                    {userNameError && <Typography variant="body2" color="error">{userNameError}</Typography>}
               </Grid>
               <Grid item xs={12} sm={6}>
               <TextField
@@ -131,6 +218,7 @@ export default function UserSignUp() {
                 id="userType"
               autoComplete="current-userType"
               />
+                    {userTypeError && <Typography variant="body2" color="error">{userTypeError}</Typography>}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -141,6 +229,7 @@ export default function UserSignUp() {
                   name="email"
                   autoComplete="email"
                 />
+                      {emailError && <Typography variant="body2" color="error">{emailError}</Typography>}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -152,6 +241,7 @@ export default function UserSignUp() {
                   id="password"
                   autoComplete="new-password"
                 />
+                      {passwordError && <Typography variant="body2" color="error">{passwordError}</Typography>}
               </Grid>
               <Grid item xs={12}>
               <TextField
@@ -164,9 +254,11 @@ export default function UserSignUp() {
                 id="phone"
                 autoComplete="current-phone"
               />
+                    {phoneError && <Typography variant="body2" color="error">{phoneError}</Typography>}
               </Grid>
 
             </Grid>
+            {/* {errorMessage && <Typography variant="body2" color="error">{errorMessage}</Typography>} */}
             <Button
             className='createKnockerBtn'
               type="submit"
@@ -189,6 +281,22 @@ export default function UserSignUp() {
       </Container>
     </ThemeProvider>
 }
+
+<Dialog
+        open={openModal}
+        onClose={handleModalClose}
+        aria-labelledby="modal-title"
+      >
+        <DialogTitle id="modal-title" >{modalTitle}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{modalContent}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleModalClose} color="primary" autoFocus>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
