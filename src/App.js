@@ -7,11 +7,13 @@ import AreaTable from './DashBoard/Table/AreaTable';
 import StickyHeadTable from './DashBoard/Table/Table';
 import PreRegisterationTable from './DashBoard/Table/PreRegisterationTable';
 import Footer from './Footer/Footer';
+import MapDisplay from './Map/Map';
 
 
 
 function App() {
   return (
+    // <MapDisplay/>
     <Router>
     <div className="App">
 

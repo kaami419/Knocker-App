@@ -1,0 +1,47 @@
+.map-container{
+    width: 100%;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height:100vh;
+    /* margin-bottom: 1rem; */
+  }
+  
+  .dropdown {
+    /* border: 1px solid red; */
+    width: 15%;
+    /* flex: 1; */
+    padding: 20px;
+  }
+  
+  .map {
+/* border: 1px solid green; */
+    width: 85%;
+    /* flex: 2; */
+  }
+
+  .viewAreaListDiv {
+    display: flex;
+    align-items: start;
+    width: 100%;
+    /* border: 1px solid red; */
+   
+    /* border: 1px solid red; */
+  }
+
+
+.gotoDashboard {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background-color: #1565c0;
+  /* border-style: none; */
+  color: white;
+  cursor: pointer;
+  /* margin-left: 1rem; */
+  /* border-radius: .5rem; */
+  margin-bottom: 1rem;
+}
+  

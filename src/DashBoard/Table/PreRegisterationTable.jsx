@@ -31,13 +31,53 @@ export default function PreRegisterationTable() {
         console.log("fetchedData:",fetchedData );
         
         if (fetchedData.length > 0) {
-          const dynamicColumns = Object.keys(fetchedData[0]).map(key => ({
-            id: key,
-            label: key,
-            minWidth: 170,
-            align: 'left',
-          }));
-          setColumns(dynamicColumns); 
+          const dynamicColumns = Object.keys(fetchedData[0]).map(key => {
+            if (key === 'createdAt') {
+              return {
+                id: key,
+                label: 'Created At',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'email') {
+              return {
+                id: key,
+                label: 'Email',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'phone') {
+              return {
+                id: key,
+                label: 'Contact Number',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'status') {
+              return {
+                id: key,
+                label: 'Status',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+        
+            return {
+              id: key,
+              label: key,
+              minWidth: 170,
+              align: 'left',
+            };
+          });
+          const filteredColumns = dynamicColumns.filter(column => (
+            column.id !== 'enable' && column.id !== 'deleted' && column.id !== 'updatedAt'
+          ));
+  
+          setColumns(filteredColumns);
+          // setColumns(dynamicColumns); 
         }
       })
       .catch(error => {
@@ -82,6 +122,18 @@ export default function PreRegisterationTable() {
                     <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
                       {columns.map((column) => {
                         const value = row[column.id];
+
+                        if (column.id === 'createdAt') {
+                          const date = new Date(value);
+                          const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+                          const formattedDate = date.toLocaleDateString('en-GB', options);
+                          return (
+                            <TableCell key={column.id} align="left">
+                              {formattedDate}
+                            </TableCell>
+                          );
+                        }
+
                         return (
                           <TableCell key={column.id} align="left">
                             {value}

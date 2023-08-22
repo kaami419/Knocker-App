@@ -170,7 +170,7 @@ export default function StickyHeadTable() {
 
   React.useEffect(() => {
    
-    axios.get('http://192.168.100.18:3001/api/knocker/get/all', {
+    axios.get('http://192.168.100.18:3001/api/knocker/all', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -181,13 +181,78 @@ export default function StickyHeadTable() {
         console.log("fetchedData:",fetchedData );
         
         if (fetchedData.length > 0) {
-          const dynamicColumns = Object.keys(fetchedData[0]).map(key => ({
-            id: key,
-            label: key,
-            minWidth: 170,
-            align: 'left',
-          }));
-          setColumns(dynamicColumns);
+          const dynamicColumns = Object.keys(fetchedData[0]).map(key => {
+            if (key === 'firstName') {
+              return {
+                id: key,
+                label: 'First Name',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'lastName') {
+              return {
+                id: key,
+                label: 'Last Name',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'userName') {
+              return {
+                id: key,
+                label: 'User Name',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'roles.name') {
+              return {
+                id: key,
+                label: 'User Role',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'email') {
+              return {
+                id: key,
+                label: 'Email',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'phone') {
+              return {
+                id: key,
+                label: 'Contact Number',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            if (key === 'status') {
+              return {
+                id: key,
+                label: 'Status',
+                minWidth: 170,
+                align: 'left',
+              };
+            }
+            
+        
+            return {
+              id: key,
+              label: key,
+              minWidth: 170,
+              align: 'left',
+            };
+          });
+          const filteredColumns = dynamicColumns.filter(column => (
+            column.id !== 'roles.id' && column.id !== 'roles.user_roles.user_id' && column.id !== 'roles.user_roles.roleId'
+          ));
+  
+          setColumns(filteredColumns);
+          // setColumns(dynamicColumns);
         }
       })
       .catch(error => {
@@ -210,14 +275,13 @@ export default function StickyHeadTable() {
         <UserSignUp/>
 
         :
+        <div>
+               <div className='tableBtnDiv'>
+           <button className='tableBtn' onClick={()=>{setKnocker(!knocker)}}>Create Knocker</button>
+             </div>
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 550 }}>
-                 <div className='tableBtnDiv'>
-          {/* <NavLink to={'./createKnocker'}> */}
-           <button className='tableBtn' onClick={()=>{setKnocker(!knocker)}}>Create Knocker</button>
-         
-           {/* </NavLink> */}
-             </div>
+
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -260,6 +324,7 @@ export default function StickyHeadTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
+        </div>
       }
     </div>
   );

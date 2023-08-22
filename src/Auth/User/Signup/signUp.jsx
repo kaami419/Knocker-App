@@ -151,7 +151,7 @@ export default function UserSignUp() {
     <ThemeProvider theme={defaultTheme}>
                    <div className='createKnockerPageBtnsDiv'>
             <NavLink to={'/'}>
-            <button className='gotoDashboard' onClick={()=>{setTable(!table)}}>View List</button>
+            <button className='gotoDashboard' onClick={()=>{setTable(!table)}}>View Knocker List</button>
             </NavLink>
             </div>
       <Container component="main" maxWidth="md" className='signUpContainer'>
