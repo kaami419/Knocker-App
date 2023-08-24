@@ -21,6 +21,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 
 
@@ -32,6 +33,8 @@ export default function UserSignin() {
   const [openModal, setOpenModal] = React.useState(false);
 const [modalTitle, setModalTitle] = React.useState('');
 const [modalContent, setModalContent] = React.useState('');
+const [emailError, setEmailError] = React.useState('');
+const [passwordError, setPasswordError] = React.useState('');
 
 const handleModalClose = () => {
   setOpenModal(false);
@@ -41,6 +44,32 @@ const handleModalOpen = (title, content) => {
   setModalTitle(title);
   setModalContent(content);
   setOpenModal(true);
+};
+
+const validateEmail = (email) => {
+  const pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  return pattern.test(email);
+};
+
+const validateForm = () => {
+  let isValid = true;
+  setEmailError('');
+  setPasswordError('');
+
+  if (formData.email.trim() === '') {
+    setEmailError('Email is required');
+    isValid = false;
+  } else if (!validateEmail(formData.email)) {
+    setEmailError('Invalid email format');
+    isValid = false;
+  }
+
+  if (formData.password.trim() === '') {
+    setPasswordError('Password is required');
+    isValid = false;
+  }
+
+  return isValid;
 };
   
     const handleChange = (event) => {
@@ -54,6 +83,11 @@ const handleModalOpen = (title, content) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
       
+        if (!validateForm()) {
+          return;
+        }
+const req= "192.168.100.18"
+
         try {
           const response = await axios.post(
             'http://192.168.100.18:3001/api/auth/signIn',
@@ -112,8 +146,8 @@ const handleModalOpen = (title, content) => {
                 alignItems: 'center',
               }}
             >
-              <Avatar sx={{ m: 1, bgcolor: '#1565c0' }}>
-                <LockOutlinedIcon />
+              <Avatar sx={{ m: 1, bgcolor: '#1565c0' }} style={{width:"3.5rem", height:"3.5rem"}}>
+                <AdminPanelSettingsIcon   fontSize='large'/>
               </Avatar>
               <Typography component="h1" variant="h5" style={{color:"#1565c0"}}>
                 Admin Sign in
@@ -130,6 +164,8 @@ const handleModalOpen = (title, content) => {
                   autoFocus
                   value={formData.email}
                   onChange={handleChange}
+                  error={emailError !== ''}
+                  helperText={emailError}
                 />
                 <TextField
                   margin="normal"
@@ -142,6 +178,8 @@ const handleModalOpen = (title, content) => {
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={handleChange}
+                  error={passwordError !== ''}
+                  helperText={passwordError}
                 />
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}

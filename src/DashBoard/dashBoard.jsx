@@ -18,7 +18,7 @@ import Grid from '@mui/material/Grid';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
+import { fourthListItems, mainListItems, secondaryListItems } from './listItems';
 import { thirdListItems } from './listItems';
 import './dashboard.css'
 import { NavLink } from 'react-router-dom';
@@ -26,6 +26,7 @@ import StickyHeadTable from './Table/Table';
 import PreRegisterationTable from './Table/PreRegisterationTable';
 import AreaTable from './Table/AreaTable';
 import { useNavigate } from 'react-router-dom';
+import PinTable from './Table/PinTable';
 
 
 
@@ -161,6 +162,8 @@ export default function Dashboard() {
             {secondaryListItems(handleSidebarItemClick)}
             <Divider sx={{ my: 1 }} />
             {thirdListItems(handleSidebarItemClick)}
+            <Divider sx={{ my: 1 }} />
+            {fourthListItems(handleSidebarItemClick)}
           </List>
         </Drawer>
         <Box
@@ -183,6 +186,8 @@ export default function Dashboard() {
                  {selectedComponent === 'table' && <StickyHeadTable />}
                 {selectedComponent === 'pre-registration' && <PreRegisterationTable />}
                 {selectedComponent === 'area' && <AreaTable />}
+                {selectedComponent === 'pins' && <PinTable />}
+                
               </Grid>
             </Grid>
           

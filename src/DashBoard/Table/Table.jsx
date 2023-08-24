@@ -169,6 +169,7 @@ export default function StickyHeadTable() {
   const token = localStorage.getItem('token');
 
   React.useEffect(() => {
+const req= "192.168.100.18"
    
     axios.get('http://192.168.100.18:3001/api/knocker/all', {
       headers: {
@@ -238,6 +239,7 @@ export default function StickyHeadTable() {
                 align: 'left',
               };
             }
+            
             
         
             return {

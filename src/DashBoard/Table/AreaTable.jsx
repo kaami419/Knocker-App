@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -8,21 +9,26 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import UserSignUp from '../../Auth/User/Signup/signUp';
+// import UserSignUp from '../../Auth/User/Signup/signUp';
 import MapDisplay from '../../Map/Map';
+import PreviewIcon from '@mui/icons-material/Preview';
+import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
 
 
 export default function AreaTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [knocker, setKnocker] = React.useState(false);
+  // const [knocker, setKnocker] = React.useState(false);
   const [area, setArea] = React.useState(false);
   const [data, setData] = React.useState([]); 
   const [columns, setColumns] = React.useState([]); 
   const token = localStorage.getItem('token');
+  const [selectedCoordinates, setSelectedCoordinates] = useState([]);
+
+const req= "192.168.100.18"
 
   React.useEffect(() => {
-    axios.get('http://192.168.100.18:3001/api/area', {
+    axios.get('http://localhost:3001/api/area', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -43,30 +49,7 @@ export default function AreaTable() {
                 align: 'left',
               };
             }
-            if (key === 'email') {
-              return {
-                id: key,
-                label: 'Email',
-                minWidth: 170,
-                align: 'left',
-              };
-            }
-            if (key === 'phone') {
-              return {
-                id: key,
-                label: 'Contact Number',
-                minWidth: 170,
-                align: 'left',
-              };
-            }
-            if (key === 'status') {
-              return {
-                id: key,
-                label: 'Status',
-                minWidth: 170,
-                align: 'left',
-              };
-            }
+            
         
             return {
               id: key,
@@ -98,10 +81,31 @@ export default function AreaTable() {
     setPage(0);
   };
 
+  // const handleEditClick = (row) => {
+  //   // Call a function to pass the row data to the MapDisplay component
+  //   // Set the data in the MapDisplay component's state to update the map
+  //   const coordinates = row.path.map((point) => point.split(' ').join(','));
+  //   setSelectedCoordinates(coordinates);
+  //   setArea(true);
+  // };
+
+
+  const handleViewClick = (row) => {
+    console.log(row);
+    const pathArray = row.path;
+    const coordinates = pathArray.map(
+      coordPair => [(coordPair[0]), (coordPair[1])]
+    );
+    setSelectedCoordinates(coordinates);
+    setArea(true);
+    console.log("coordinates", selectedCoordinates,coordinates);
+  };
+
+
   return (
     <div>
       {area ? 
-        <MapDisplay/>
+        <MapDisplay selectedCoordinates={selectedCoordinates}/>
         :
         <div>
         <div className='tableBtnDiv'>
@@ -115,6 +119,7 @@ export default function AreaTable() {
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
+      
                   {columns.map((column) => (
                     <TableCell
                       key={column.id}
@@ -124,6 +129,13 @@ export default function AreaTable() {
                       {column.label}
                     </TableCell>
                   ))}
+                  <TableCell
+                   align="left"
+                   style={{  color: '#1565c0' }}
+                   >
+                    View
+                  </TableCell>
+        
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -131,8 +143,10 @@ export default function AreaTable() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, rowIndex) => (
                     <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
+
                       {columns.map((column) => {
                         const value = row[column.id];
+                        
 
   
           if (column.id === 'createdAt') {
@@ -140,16 +154,35 @@ export default function AreaTable() {
             const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
             const formattedDate = date.toLocaleDateString('en-GB', options);
             return (
+              <>
               <TableCell key={column.id} align="left">
                 {formattedDate}
               </TableCell>
+                {/* <TableCell>
+                <button
+                  onClick={() => handleEditClick(row)}
+                  style={{ color: '#1565c0', cursor: 'pointer', border: 'none', background: 'none' }}
+                >
+                  Edit
+                </button>
+              </TableCell> */}
+              <TableCell>
+          {/* <button key={column.id}
+            onClick={() => {handleViewClick(row)}}
+            style={{ color: '#1565c0', cursor: 'pointer', border: 'none', background: 'none' }}
+          >
+            View
+          </button> */}
+          <RemoveRedEyeRoundedIcon onClick={() => {handleViewClick(row)}}  style={{ color: '#1565c0', cursor: 'pointer', border: 'none', background: 'none' }}/>
+        </TableCell>
+                            </>
             );
           }
 
                         return (
                           <TableCell key={column.id} align="left">
                             {value}
-                          </TableCell>
+                          </TableCell>         
                         );
                       })}
                     </TableRow>

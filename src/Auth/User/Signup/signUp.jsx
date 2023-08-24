@@ -120,6 +120,8 @@ export default function UserSignUp() {
       setErrorMessage("Please fill in all required fields.");
       return; 
     }
+const req= "192.168.100.18"
+
   
     try {
       const response = await axios.post('http://192.168.100.18:3001/api/admin/create/user', formData,{
@@ -128,8 +130,11 @@ export default function UserSignUp() {
         }
       });
       console.log('API Response:', response.data);
-      handleModalOpen('Success', 'Knocker created successfully.');
-      navigate('/')
+      
+      alert('Success', 'Knocker created successfully.');
+      // navigate('/')
+      setTable(!table)
+     
     } catch (error) {
       console.error('API Error:', error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -180,8 +185,10 @@ export default function UserSignUp() {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  error={firstNameError !== ''}
+                  helperText={firstNameError}
                 />
-                  {firstNameError && <Typography variant="body2" color="error">{firstNameError}</Typography>}
+                  {/* {firstNameError && <Typography variant="body2" color="error">{firstNameError}</Typography>} */}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -191,8 +198,10 @@ export default function UserSignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  error={lastNameError !== ''}
+                  helperText={lastNameError}
                 />
-                {lastNameError && <Typography variant="body2" color="error">{lastNameError}</Typography>}
+                {/* {lastNameError && <Typography variant="body2" color="error">{lastNameError}</Typography>} */}
               </Grid>
               <Grid item xs={12} sm={6}>
               <TextField
@@ -204,8 +213,10 @@ export default function UserSignUp() {
                 type="text"
                 id="userName"
                 autoComplete="current-userName"
+                error={userNameError !== ''}
+                  helperText={userNameError}
               />
-                    {userNameError && <Typography variant="body2" color="error">{userNameError}</Typography>}
+                {/* {userNameError && <Typography variant="body2" color="error">{userNameError}</Typography>} */}
               </Grid>
               <Grid item xs={12} sm={6}>
               <TextField
@@ -217,8 +228,11 @@ export default function UserSignUp() {
                type="text"
                 id="userType"
               autoComplete="current-userType"
+              defaultValue={"Knocker"}
+              error={userTypeError !== ''}
+              helperText={userTypeError}
               />
-                    {userTypeError && <Typography variant="body2" color="error">{userTypeError}</Typography>}
+                    {/* {userTypeError && <Typography variant="body2" color="error">{userTypeError}</Typography>} */}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -228,8 +242,10 @@ export default function UserSignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={emailError !== ''}
+                  helperText={emailError}
                 />
-                      {emailError && <Typography variant="body2" color="error">{emailError}</Typography>}
+                      {/* {emailError && <Typography variant="body2" color="error">{emailError}</Typography>} */}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -240,8 +256,11 @@ export default function UserSignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={passwordError !== ''}
+                  helperText={passwordError}
+                  
                 />
-                      {passwordError && <Typography variant="body2" color="error">{passwordError}</Typography>}
+                      {/* {passwordError && <Typography variant="body2" color="error">{passwordError}</Typography>} */}
               </Grid>
               <Grid item xs={12}>
               <TextField
@@ -253,8 +272,10 @@ export default function UserSignUp() {
                 type="number"
                 id="phone"
                 autoComplete="current-phone"
+                error={phoneError !== ''}
+                  helperText={phoneError}
               />
-                    {phoneError && <Typography variant="body2" color="error">{phoneError}</Typography>}
+                    {/* {phoneError && <Typography variant="body2" color="error">{phoneError}</Typography>} */}
               </Grid>
 
             </Grid>
