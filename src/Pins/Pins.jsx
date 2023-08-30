@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -55,10 +57,28 @@ export default function CreatePin({selectedPin, editingPin}) {
             }
           });
           console.log('Pin created:', response.data);
-          // alert('Pin created successfully');
+          toast.success(`${response.data.message}`, {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
           setPin(!pin)
 
         } catch (error) {
+          
+          toast.error(`Error: ${error.response.data.message}`, {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
           console.error('Error creating pin:', error);
 
         }
@@ -79,9 +99,27 @@ export default function CreatePin({selectedPin, editingPin}) {
             }
           );
           console.log('Pin updated:', response.data);
+          toast.success(`${response.data.message}`, {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
           // alert('Pin updated successfully');
           setPin(!pin)
         } catch (error) {
+          toast.error(`Error: ${error.response.data}`, {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
           console.error('Error updating pin:', error);
         }
       };

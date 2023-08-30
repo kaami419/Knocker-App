@@ -1,5 +1,8 @@
 import * as React  from 'react';
 import { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -104,16 +107,35 @@ const req= "192.168.100.18"
       
           if (response.status === 200) {
             const token = response.data.token;
+            toast.success('Sign-in successful!', {
+              position: 'top-right',
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
             // handleModalOpen('Success: Sign-in successful.');
             // alert("Success: Sign-in successful.")
             localStorage.setItem('token', token);
-           
+
             // console.log('Sign-in successful');
             navigate('/Dashboard/knockerTable')
+            
           } 
         } catch (error) {
           // console.error('Error occurred during sign-in:', error);
-          handleModalOpen(`${error.response.data.message}`);
+          // handleModalOpen(`${error.response.data.message}`);
+          toast.error(`Error: ${error.response.data.message}`, {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
           // alert(``)
           // console.log('Error response:', error.response.statusText);
 
@@ -232,6 +254,7 @@ const req= "192.168.100.18"
     </Button>
   </DialogActions>
 </Dialog>
+<ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       </ThemeProvider>
       
     );

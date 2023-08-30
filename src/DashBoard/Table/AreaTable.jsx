@@ -1,4 +1,6 @@
 import * as React from "react";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState } from "react";
 import axios from "axios";
 import Paper from "@mui/material/Paper";
@@ -16,7 +18,8 @@ import RemoveRedEyeRoundedIcon from "@mui/icons-material/RemoveRedEyeRounded";
 import { Button, Modal } from "@mui/material";
 import "./Table.css";
 import { useNavigate, useLocation } from "react-router-dom";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
+
 
 export default function AreaTable() {
   const [page, setPage] = React.useState(0);
@@ -30,9 +33,6 @@ export default function AreaTable() {
   const [selectedAreaKnockers, setSelectedAreaKnockers] = useState([]);
   const [isKnockersModalOpen, setIsKnockersModalOpen] = useState(false);
   const [idCounter, setIdCounter] = React.useState(1);
-  
-    
-
 
   const location = useLocation();
   const req = "192.168.100.18";
@@ -92,10 +92,8 @@ export default function AreaTable() {
               column.id !== "deleted" &&
               column.id !== "updatedAt" &&
               column.id !== "id" &&
-              column.id !== 'path'
-
+              column.id !== "path"
           );
-          
 
           setColumns(filteredColumns);
           // setColumns(dynamicColumns);
@@ -137,7 +135,6 @@ export default function AreaTable() {
     // console.log("coordinates", coordinates);
     // console.log("selectedCoordinates",selectedCoordinates);
     // navigate("/Dashboard/map");  //work on this
-
   };
 
   const handleViewKnockersClick = async (areaId) => {
@@ -171,7 +168,7 @@ export default function AreaTable() {
   return (
     <div>
       {area ? (
-        <MapDisplay selectedCoordinates={selectedCoordinates}   />
+        <MapDisplay selectedCoordinates={selectedCoordinates} />
       ) : (
         <div>
           <div className="tableBtnDiv">
@@ -194,18 +191,18 @@ export default function AreaTable() {
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
-                  <TableCell
-                        key={"Id"}
-                        align="left"
-                        style={{
-                          // minWidth,
-                          color: "#1565c0",
-                          backgroundColor: "lightgray",
-                          paddingRight:"4rem"
-                        }}
-                      >
-                        Id
-                      </TableCell>
+                    <TableCell
+                      key={"Id"}
+                      align="left"
+                      style={{
+                        // minWidth,
+                        color: "#1565c0",
+                        backgroundColor: "lightgray",
+                        paddingRight: "4rem",
+                      }}
+                    >
+                      Id
+                    </TableCell>
                     {columns.map((column) => (
                       <TableCell
                         key={column.id}
@@ -243,9 +240,9 @@ export default function AreaTable() {
                         tabIndex={-1}
                         key={rowIndex}
                       >
-                           <TableCell align="left">
-                           {data.length - rowIndex} 
-                            </TableCell>
+                        <TableCell align="left">
+                          {data.length - rowIndex}
+                        </TableCell>
                         {columns.map((column) => {
                           const value = row[column.id];
 
@@ -291,9 +288,7 @@ export default function AreaTable() {
                   Edit
                 </button>
               </TableCell> */}
-                                <TableCell
-                                style={{paddingRight:"4rem"}}
-                                >
+                                <TableCell style={{ paddingRight: "4rem" }}>
                                   <RemoveRedEyeRoundedIcon
                                     onClick={() => {
                                       handleViewClick(row);
@@ -316,9 +311,7 @@ export default function AreaTable() {
                             </TableCell>
                           );
                         })}
-                        <TableCell
-                        
-                        >
+                        <TableCell>
                           <Button
                             variant="contained"
                             color="primary"
@@ -334,7 +327,7 @@ export default function AreaTable() {
             </TableContainer>
             <TablePagination
               style={{ color: "#1565c0" }}
-              rowsPerPageOptions={[5, 10, 25, 100,500,1000]}
+              rowsPerPageOptions={[5, 10, 25, 100, 500, 1000]}
               component="div"
               count={data.length}
               rowsPerPage={rowsPerPage}
@@ -343,13 +336,12 @@ export default function AreaTable() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
-            <KnockersModal
-             setSelectedAreaKnockers={setSelectedAreaKnockers} 
-              selectedAreaKnockers={selectedAreaKnockers}
-              isOpen={isKnockersModalOpen}
-              onClose={() => setIsKnockersModalOpen(false)}
-            />
-        
+          <KnockersModal
+            setSelectedAreaKnockers={setSelectedAreaKnockers}
+            selectedAreaKnockers={selectedAreaKnockers}
+            isOpen={isKnockersModalOpen}
+            onClose={() => setIsKnockersModalOpen(false)}
+          />
         </div>
       )}
     </div>
@@ -369,7 +361,7 @@ export default function AreaTable() {
 //           }
 //         }
 //       );
-  
+
 //       const updatedResponse = await axios.get(
 //         `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area/get/users?areaId=${selectedAreaId}`,
 //         {
@@ -378,13 +370,12 @@ export default function AreaTable() {
 //           },
 //         }
 //       );
-  
+
 //       // Update the state with the updated list of knockers
 //       setSelectedAreaKnockers(updatedResponse.data.area[0].users || []);
 //       // Handle the success response, you can update the UI or perform any necessary actions
 //       console.log("Knocker deleted successfully:", response.data);
-  
-      
+
 //     } catch (error) {
 //       console.error("Error deleting knocker:", error);
 //       // Handle the error, update UI or show an error message
@@ -432,7 +423,7 @@ export default function AreaTable() {
 //         </h2>
 //         <div >
 //           {selectedAreaKnockers.map((knocker) => (
-           
+
 //            <div key={knocker.id} className="knockerList">
 //            <div style={{ width: "50%" }}>{knocker.userName}</div>
 //            <div style={{ width: "50%" }}>
@@ -442,21 +433,24 @@ export default function AreaTable() {
 //              />
 //            </div>
 //          </div>
-     
 
-         
 //           ))}
 //         </div>
 //       </div>
 //     </div>
 //   );
 // }
-function KnockersModal({ isOpen, onClose, selectedAreaKnockers, setSelectedAreaKnockers }) {
+function KnockersModal({
+  isOpen,
+  onClose,
+  selectedAreaKnockers,
+  setSelectedAreaKnockers,
+}) {
+  
   const token = localStorage.getItem("token");
 
   const handleDeleteKnocker = async (usersAreasId) => {
     try {
-      // Make an API call to remove the knocker from the area
       const response = await axios.delete(
         `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area/assign?id=${usersAreasId}`,
         {
@@ -466,16 +460,32 @@ function KnockersModal({ isOpen, onClose, selectedAreaKnockers, setSelectedAreaK
         }
       );
 
-      // Update the state with the updated list of knockers
       setSelectedAreaKnockers((prevKnockers) =>
-        prevKnockers.filter((knocker) => knocker.users_areas.id !== usersAreasId)
+        prevKnockers.filter(
+          (knocker) => knocker.users_areas.id !== usersAreasId
+        )
       );
-
-      // Handle the success response, you can update the UI or perform any necessary actions
+      toast.success('Area Unassigned to Knocker Successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.log("Knocker deleted successfully:", response.data);
     } catch (error) {
+      toast.error(`Error Deleting Knocker From This Area`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.error("Error deleting knocker:", error);
-      // Handle the error, update UI or show an error message
     }
   };
 
@@ -520,10 +530,12 @@ function KnockersModal({ isOpen, onClose, selectedAreaKnockers, setSelectedAreaK
         <h2 style={{ color: "#1565c0", textAlign: "center" }}>
           Knockers for Selected Area
         </h2>
-        <div style={{display:'flex', justifyContent:"center"}}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           {selectedAreaKnockers.map((knocker) => (
             <div key={knocker.id} className="knockerList">
-              <div style={{ width: "50%" ,color: "#1565c0" }}>{knocker.userName}</div>
+              <div style={{ width: "50%", color: "#1565c0" }}>
+              Name:  {knocker.userName}
+              </div>
               <div style={{ width: "50%", color: "#1565c0" }}>
                 <DeleteIcon
                   style={{ width: "1.3rem", cursor: "pointer" }}
@@ -537,4 +549,3 @@ function KnockersModal({ isOpen, onClose, selectedAreaKnockers, setSelectedAreaK
     </div>
   );
 }
-

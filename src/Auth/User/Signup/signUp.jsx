@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -154,6 +157,15 @@ const req= "192.168.100.18"
           Authorization: `Bearer ${token}` 
         }
       });
+      toast.success('Knocker created successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       // console.log('API Response:', response.data);
       
       // alert('Success: Knocker created successfully.');
@@ -164,11 +176,30 @@ const req= "192.168.100.18"
     } catch (error) {
       console.error('API Error:', error);
       if (error.response && error.response.data && error.response.data.message) {
+        
         setErrorMessage(error.response.data.message); 
-        handleModalOpen('Error', error.response.data.message);
+        console.log("error msg:", errorMessage);
+        // handleModalOpen('Error', error.response.data.message);
+        toast.error(`Error: ${errorMessage}`, {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       } else {
         setErrorMessage("An error occurred. Please try again later."); 
-        handleModalOpen('Error', 'An error occurred. Please try again later.');
+        toast.error(`Error: ${errorMessage}`, {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
       
     }
@@ -207,13 +238,33 @@ const req= "192.168.100.18"
         }
       );
 
-      console.log('User updated:', selectedUser.id);
+      // console.log('User updated:', selectedUser.id);
+      toast.success('Knocker updated successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       // alert(`Success: ${response.data.message}`)
       setTable(!table)
 
       // navigate('/Dashboard/knockersList')
     } catch (error) {
-      console.error('Error updating user:', error);
+      setErrorMessage(error.response.data.message); 
+
+      // console.error('Error updating user:', error);
+      toast.error(`Error: ${error}`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       // alert(error.response.data.message)
     }
   };

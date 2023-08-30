@@ -271,6 +271,7 @@ const req= "192.168.100.18"
               setSelectedUser(row); 
               setKnocker(!knocker);
               setEditingPin(editingPin)
+              // navigate('/Dashboard/updateKnocker')
             }}          >
           </EditIcon>
         </TableCell>
@@ -351,7 +352,13 @@ function AreasModal({ user, userAreas, isOpen, onClose, setShowMapView , showMap
           ))}
         </ul>
         {showMapView && userAreas.length > 0 ? ( 
-          <MapDisplay selectedCoordinates={userAreas[0].path} showAreaSelection={show} />
+          // <MapDisplay selectedCoordinates={userAreas[0].path} showAreaSelection={show} />
+          <div>
+          {userAreas.map((area, index) => (
+            <MapDisplay key={area.id} selectedCoordinates={area.path} showAreaSelection={show} />
+          ))}
+        </div>
+
         ) : (
           <div style={{textAlign:"center"}}>
           <p>No Area available for this Knocker</p>

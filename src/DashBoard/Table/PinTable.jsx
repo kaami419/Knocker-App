@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -123,16 +125,34 @@ const req= "192.168.100.18"
           },
         }
       );
-      console.log('Pin deleted:', response.data);
+  console.log('Pin deleted:', response.data);
   
      
       const updatedData = data.filter(pin => pin.id !== pinData.id);
       setData(updatedData);
-  
+      toast.success( `${response.data.message}`, {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      
      
       // alert('Pin deleted successfully');
   
     } catch (error) {
+      toast.error(`Some Error Occurred`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.error('Error deleting pin:', error);
   
    

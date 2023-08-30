@@ -1,5 +1,7 @@
 
 import React,{ useMemo, useState, useEffect } from "react";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { GoogleMap, useLoadScript, Polygon, DrawingManager } from "@react-google-maps/api";
 import "./Map.css";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -8,6 +10,7 @@ import axios from 'axios';
 import AreaTable from "../DashBoard/Table/AreaTable";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+
 
 const libraries = ["drawing"];
 const token = localStorage.getItem('token');
@@ -58,6 +61,7 @@ export default function MapDisplay({selectedCoordinates, showAreaSelection}) {
         lng: Number(coord[1])
       }));
       setShapes([paths]);
+      //  setShapes(prevShapes => [...prevShapes, paths]); 
       // console.log("shape", [paths]);
     } else {
       setShapes([]);
@@ -79,9 +83,28 @@ export default function MapDisplay({selectedCoordinates, showAreaSelection}) {
   const onSaveButtonClick = () => {
     if (selectedShapeIndex !== null && areaName.trim() !== "") {
       const selectedShape = shapes[selectedShapeIndex];
-      saveShapeData(areaName, selectedShape); // Use the areaName directly
-      alert("Area Created Successfully!");
+      saveShapeData(areaName, selectedShape); 
+      toast.success(`Area Created Successfully!`, {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setTable(!table);
+    }else{
+      toast.error(`Some Error Occurred`, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      // console.log("Some Error Occurred");
     }
   };
   

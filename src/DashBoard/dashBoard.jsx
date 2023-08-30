@@ -233,6 +233,7 @@ export default function Dashboard() {
                 {selectedComponent === 'area' && <AreaTable showAreaSelection={true} />}
                 {selectedComponent === 'pins' && <PinTable />}
                 {selectedComponent=== 'assignArea' && <AssignAreaToKnocker/>}
+                {/* {selectedComponent=== 'updateKnocker' &&<UserSignUp/>} */}
                 {selectedComponent=== 'createKnocker' && <UserSignUp/>}
                 {selectedComponent=== 'map' && <MapDisplay/>}
                 {selectedComponent=== 'createPin' && <CreatePin/>}
