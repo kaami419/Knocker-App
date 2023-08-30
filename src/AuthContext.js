@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
 
   const setAuthToken = (newToken) => {
     setToken(newToken);
-    console.log("token hai yeh:", newToken);
+    // console.log("token hai yeh:", newToken);
   };
 
   return (

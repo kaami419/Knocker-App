@@ -26,8 +26,7 @@ import DialogActions from '@mui/material/DialogActions';
 
 const defaultTheme = createTheme();
 
-export default function UserSignUp() {
-  const navigate= useNavigate()
+export default function UserSignUp({selectedUser, editingPin}) {
   const [table, setTable] = React.useState(false);
   const token = localStorage.getItem('token');
   const [firstNameError, setFirstNameError] = React.useState("");
@@ -41,6 +40,32 @@ export default function UserSignUp() {
   const [openModal, setOpenModal] = React.useState(false);
   const [modalTitle, setModalTitle] = React.useState('');
   const [modalContent, setModalContent] = React.useState('');
+  const [formData, setFormData] = React.useState({
+    firstName: selectedUser ? selectedUser.firstName : '',
+    lastName: selectedUser ? selectedUser.lastName : '',
+    userName: selectedUser ? selectedUser.userName : '',
+    email: selectedUser ? selectedUser.email: '',
+    phone: selectedUser ? selectedUser.phone: '',
+    password: selectedUser ? selectedUser.password: '',
+  });
+
+  const navigate= useNavigate()
+
+
+  // React.useEffect(() => {
+  //   // Populate the form fields with selectedUser data when component mounts
+  //   setFormData({
+  //     firstName: selectedUser ? selectedUser.firstName : '',
+  //     lastName: selectedUser ? selectedUser.lastName : '',
+  //     userName: selectedUser ? selectedUser.userName : '',
+  //     email: selectedUser ? selectedUser.email : '',
+  //     phone: selectedUser ? selectedUser.phone : '',
+  //     password: selectedUser ? selectedUser.password: '',
+
+  //   });
+  // }, [selectedUser]);
+
+ 
 
   const handleModalClose = () => {
     setOpenModal(false);
@@ -124,16 +149,17 @@ const req= "192.168.100.18"
 
   
     try {
-      const response = await axios.post('http://192.168.100.18:3001/api/admin/create/user', formData,{
+      const response = await axios.post('https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/admin/create/user', formData,{
         headers: {
           Authorization: `Bearer ${token}` 
         }
       });
-      console.log('API Response:', response.data);
+      // console.log('API Response:', response.data);
       
-      alert('Success', 'Knocker created successfully.');
-      // navigate('/')
+      // alert('Success: Knocker created successfully.');
+      // navigate('/Dashboard/knockersList')
       setTable(!table)
+      
      
     } catch (error) {
       console.error('API Error:', error);
@@ -147,6 +173,58 @@ const req= "192.168.100.18"
       
     }
   };
+   
+  React.useEffect(() => {
+    setFormData({
+      firstName: selectedUser ? selectedUser.firstName : '',
+      lastName: selectedUser ? selectedUser.lastName : '',
+      userName: selectedUser ? selectedUser.userName : '',
+      email: selectedUser ? selectedUser.email : '',
+      phone: selectedUser ? selectedUser.phone : '',
+      password: selectedUser ? selectedUser.password: '',
+
+    });
+  }, [selectedUser]);
+
+  const handleUpdateUser = async () => {
+    // Construct the updated user data object
+    const updatedUserData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      userName: formData.userName
+    };
+
+    try {
+      const response = await axios.put(
+        `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/knocker?id=${selectedUser.id}`,{
+        updatedUserData},{
+          headers:{
+            Authorization: `Bearer ${token}`,
+
+          }
+        }
+      );
+
+      console.log('User updated:', selectedUser.id);
+      // alert(`Success: ${response.data.message}`)
+      setTable(!table)
+
+      // navigate('/Dashboard/knockersList')
+    } catch (error) {
+      console.error('Error updating user:', error);
+      // alert(error.response.data.message)
+    }
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   return (
     <div>
@@ -154,11 +232,11 @@ const req= "192.168.100.18"
       <StickyHeadTable/>
       :
     <ThemeProvider theme={defaultTheme}>
-                   <div className='createKnockerPageBtnsDiv'>
-            <NavLink to={'/'}>
-            <button className='gotoDashboard' onClick={()=>{setTable(!table)}}>View Knocker List</button>
-            </NavLink>
-            </div>
+                   {/* <div className='createKnockerPageBtnsDiv'> */}
+            {/* <NavLink to={'/Dashboard'}> */}
+            {/* <Button variant='contained' color='primary'  onClick={()=>{ navigate('/Dashboard/knockerTable');setTable(!table);}}>View Knocker List</Button> */}
+            {/* </NavLink> */}
+            {/* </div> */}
       <Container component="main" maxWidth="md" className='signUpContainer'>
         <CssBaseline />
 
@@ -184,11 +262,13 @@ const req= "192.168.100.18"
                   fullWidth
                   id="firstName"
                   label="First Name"
+                  value={formData.firstName} // Bind to formData.firstName                  
                   autoFocus
                   error={firstNameError !== ''}
                   helperText={firstNameError}
+                  onChange={handleInputChange}
                 />
-                  {/* {firstNameError && <Typography variant="body2" color="error">{firstNameError}</Typography>} */}
+
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -197,11 +277,13 @@ const req= "192.168.100.18"
                   id="lastName"
                   label="Last Name"
                   name="lastName"
+                  value={formData.lastName} // Bind to formData.firstName                  
                   autoComplete="family-name"
                   error={lastNameError !== ''}
                   helperText={lastNameError}
+                  onChange={handleInputChange}
+
                 />
-                {/* {lastNameError && <Typography variant="body2" color="error">{lastNameError}</Typography>} */}
               </Grid>
               <Grid item xs={12} sm={6}>
               <TextField
@@ -210,13 +292,14 @@ const req= "192.168.100.18"
                 fullWidth
                 name="userName"
                 label="User Name"
-                type="text"
+                value={formData.userName} // Bind to formData.firstName              
                 id="userName"
-                autoComplete="current-userName"
+                // autoComplete="current-userName"
                 error={userNameError !== ''}
                   helperText={userNameError}
+                  onChange={handleInputChange}
+
               />
-                {/* {userNameError && <Typography variant="body2" color="error">{userNameError}</Typography>} */}
               </Grid>
               <Grid item xs={12} sm={6}>
               <TextField
@@ -224,15 +307,15 @@ const req= "192.168.100.18"
                 required
                 fullWidth
               name="userType"
-              label="User Type"
-               type="text"
+              label="User Type"            
                 id="userType"
               autoComplete="current-userType"
               defaultValue={"Knocker"}
               error={userTypeError !== ''}
               helperText={userTypeError}
+              onChange={handleInputChange}
+
               />
-                    {/* {userTypeError && <Typography variant="body2" color="error">{userTypeError}</Typography>} */}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -241,11 +324,13 @@ const req= "192.168.100.18"
                   id="email"
                   label="Email Address"
                   name="email"
+                  value={formData.email} // Bind to formData.firstName                  
                   autoComplete="email"
                   error={emailError !== ''}
                   helperText={emailError}
+                  onChange={handleInputChange}
+
                 />
-                      {/* {emailError && <Typography variant="body2" color="error">{emailError}</Typography>} */}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -255,12 +340,14 @@ const req= "192.168.100.18"
                   label="Password"
                   type="password"
                   id="password"
+                  value={formData.password} // Bind to formData.firstName                  
                   autoComplete="new-password"
                   error={passwordError !== ''}
                   helperText={passwordError}
+                  onChange={handleInputChange}
+
                   
                 />
-                      {/* {passwordError && <Typography variant="body2" color="error">{passwordError}</Typography>} */}
               </Grid>
               <Grid item xs={12}>
               <TextField
@@ -270,25 +357,42 @@ const req= "192.168.100.18"
                 name="phone"
                label="Phone Number"
                 type="number"
+                value={formData.phone} // Pre-filled value
                 id="phone"
                 autoComplete="current-phone"
                 error={phoneError !== ''}
                   helperText={phoneError}
+                  onChange={handleInputChange}
+
               />
-                    {/* {phoneError && <Typography variant="body2" color="error">{phoneError}</Typography>} */}
               </Grid>
 
             </Grid>
-            {/* {errorMessage && <Typography variant="body2" color="error">{errorMessage}</Typography>} */}
-            <Button
-            className='createKnockerBtn'
+            <Grid>
+            {editingPin ? (
+              <Button
+              style={{ marginBottom: ".90rem"}}
+              halfwidth='true'
+          color="primary"
+          variant="contained"
+          onClick={handleUpdateUser}
+        >
+          Update
+        </Button>
+          
+            ) : (
+              <Button
+            // className='createKnockerBtn'
+            color='primary'
               type="submit"
-              halfWidth
+              halfwidth='true'
               variant="contained"
               sx={{ mt: 3, mb: 5 }}
             >
-              Create Knocker
+              Create
             </Button>
+            )}
+      </Grid>
             <Grid container justifyContent="flex-end">
               {/* <Grid item>
                 <NavLink to={'/UserSignin'} variant="body2" style={{textDecorationColor: 'rgba(25, 118, 210, 0.4)',color: '#1976d2'}}>
@@ -322,205 +426,3 @@ const req= "192.168.100.18"
   );
 }
 
-
-// import * as React from 'react';
-// // import Avatar from '@mui/material/Avatar';
-// import Button from '@mui/material/Button';
-// import CssBaseline from '@mui/material/CssBaseline';
-// import TextField from '@mui/material/TextField';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
-// import Link from '@mui/material/Link';
-// import Paper from '@mui/material/Paper';
-// import Box from '@mui/material/Box';
-// import Grid from '@mui/material/Grid';
-// // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-// import Typography from '@mui/material/Typography';
-// import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import { NavLink } from 'react-router-dom';
-// import './signUp.css'
-// import axios from 'axios';
-
-// function Copyright(props) {
-//   return (
-//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-//       {'Copyright © '}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{' '}
-//       {new Date().getFullYear()}
-//       {'.'}
-//     </Typography>
-//   );
-// }
-
-// const defaultTheme = createTheme();
-
-// export default function UserSignUp() {
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-    
-  //   const data = new FormData(event.currentTarget);
-  
-  //   const formData = {
-  //     firstName: data.get('firstName'),
-  //     lastName: data.get('lastName'),
-  //     password: data.get('password'),
-  //     phone: data.get('phone'), 
-  //     email: data.get('email'),
-  //     userName: data.get('userName'),
-  //     userType: data.get('userType')
-  //   };
-  
-  //   try {
-  //     const response = await axios.post('http://localhost:3001/api/admin/create/user', formData);
-  //     console.log('API Response:', response.data);
-  //     // Handle success, maybe show a success message or redirect to another page
-  //   } catch (error) {
-  //     console.error('API Error:', error);
-  //     // Handle error, show an error message to the user
-  //   }
-  // };
-
-//   return (
-//     <ThemeProvider theme={defaultTheme}>
-//       <Grid container component="main" sx={{ height: '100vh' }}>
-//         <CssBaseline />
-//         <Grid
-//           item
-//           xs={false}
-//           sm={4}
-//           md={7}
-//           sx={{
-//             backgroundImage: 'url(https://images.unsplash.com/photo-1476610182048-b716b8518aae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTIzNTg3ODI&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080)',
-//             backgroundRepeat: 'no-repeat',
-//             backgroundColor: (t) =>
-//               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-//             backgroundSize: 'cover',
-//             backgroundPosition: 'center',
-//           }}
-//         />
-        
-//         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-//           <Box
-//             sx={{
-//               my: 8,
-//               mx: 4,
-//               display: 'flex',
-//               flexDirection: 'column',
-//               alignItems: 'center',
-//             }}
-//           >
-//                 <div className='createKnockerPageBtnsDiv'>
-//                     <NavLink to={'/'}>
-//                     <button className='gotoDashboard'>Go to Dashboard</button>
-//                     </NavLink>
-//                 </div>
-
-//             <Typography component="h1" variant="h5" color="#1976d2" fontWeight={100}>
-//               Create Knocker
-//             </Typography>
-//             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>     
-//             <TextField
-//                 margin="normal"
-//                 required
-//                 fullWidth
-//                 name="firstName"
-//                 label="First Name"
-//                 type="text"
-//                 id="firstName"
-//                 autoComplete="current-firstName"
-//               />
-//                <TextField
-//                 margin="normal"
-//                 required
-//                 fullWidth
-//                 name="lastName"
-//                 label="Last Name"
-//                 type="text"
-//                 id="lastName"
-//                 autoComplete="current-lastName"
-//               />
-//                 <TextField
-//                 margin="normal"
-//                 required
-//                 fullWidth
-//                 name="userName"
-//                 label="User Name"
-//                 type="text"
-//                 id="userName"
-//                 autoComplete="current-userName"
-//               />
-//               <TextField
-//                 margin="normal"
-//                 required
-//                 fullWidth
-//                 id="email"
-//                 label="Email Address"
-//                 name="email"
-//                 autoComplete="email"
-//                 autoFocus
-//               />
-//               <TextField
-//                 margin="normal"
-//                 required
-//                 fullWidth
-//                 name="password"
-//                 label="Password"
-//                 type="password"
-//                 id="password"
-//                 autoComplete="current-password"
-//               />
-//                 <TextField
-//                 margin="normal"
-//                 required
-//                 fullWidth
-//                 name="UserType"
-//                 label="User Type"
-//                 type="text"
-//                 id="userType"
-//                 autoComplete="current-userType"
-//               />
-//                 <TextField
-//                 margin="normal"
-//                 required
-//                 fullWidth
-//                 name="phone"
-//                 label="Phone Number"
-//                 type="number"
-//                 id="phone"
-//                 autoComplete="current-phone"
-//               />
-              
-//               <FormControlLabel
-//                 control={<Checkbox value="remember" color="primary" />}
-//                 label="Remember me"
-//               />
-//               <Button
-//                 type="submit"
-//                 fullWidth
-//                 variant="contained"
-//                 sx={{ mt: 3, mb: 2 }}
-//               >
-//                 Create
-//               </Button>
-//               <Grid container>
-//                 <Grid item xs>
-//                   {/* <Link href="#" variant="body2">
-//                     Forgot password?
-//                   </Link> */}
-//                 </Grid>
-//                 <Grid item>
-//                 <NavLink to={'/UserSignin'} variant="body2" style={{textDecorationColor: 'rgba(25, 118, 210, 0.4)',color: '#1976d2'}}>
-//                     {"Already have an account? Sign in"}
-//                   </NavLink>
-//                 </Grid>
-//               </Grid>
-//               {/* <Copyright sx={{ mt: 5 }} /> */}
-//             </Box>
-//           </Box>
-//         </Grid>
-//       </Grid>
-//     </ThemeProvider>
-//   );
-// }

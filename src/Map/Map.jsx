@@ -6,10 +6,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import axios from 'axios';
 import AreaTable from "../DashBoard/Table/AreaTable";
-
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const libraries = ["drawing"];
-// const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjkyMjU5NzgxfQ.pToIKrBNH-NCYKj286_At-cIHs3VRtllS-X9snoS-r0"
 const token = localStorage.getItem('token');
 
 const req= "192.168.100.18"
@@ -17,7 +17,7 @@ const req= "192.168.100.18"
 const saveShapeData = async (name, coordinates) => {
   try {
     const path = coordinates.map((coord) => [coord.lat, coord.lng]);
-    const response = await axios.post('http://localhost:3001/api/area', {
+    const response = await axios.post('https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area', {
       name,
       path,
     },
@@ -32,7 +32,7 @@ const saveShapeData = async (name, coordinates) => {
   }
 };
 
-export default function MapDisplay({selectedCoordinates}) {
+export default function MapDisplay({selectedCoordinates, showAreaSelection}) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyD6iiqGUi60qosic-Yl6DOsK2cin2sNX_o",
     libraries
@@ -52,13 +52,13 @@ export default function MapDisplay({selectedCoordinates}) {
   };
   // console.log("shapes here before", shapes);
   useEffect(() => {
-    if (selectedCoordinates.length > 0) {
+    if (selectedCoordinates && selectedCoordinates.length > 0) {
       const paths = selectedCoordinates.map(coord => ({
         lat: Number(coord[0]),
         lng: Number(coord[1])
       }));
       setShapes([paths]);
-      console.log("shape", [paths]);
+      // console.log("shape", [paths]);
     } else {
       setShapes([]);
     }
@@ -85,36 +85,28 @@ export default function MapDisplay({selectedCoordinates}) {
     }
   };
   
-  
+  const navigate= useNavigate()
+
 
   if (!isLoaded) return <div>
     <Box sx={{ display: 'flex' }}>
       <CircularProgress />
     </Box>
   </div>;
+
+
   
 
-  return (<div>
-  {/* <Map drawingMode={drawingMode} setDrawingMode={setDrawingMode} onPolygonComplete={onPolygonComplete} shapes={shapes} /> */}
+  return (
+  <div>
 {table?<AreaTable/>:
 <div>
-           <div className='viewAreaListDiv'>
-           <button className='gotoDashboard' onClick={()=>{setTable(!table)}}>View Area Listing</button>
-           </div>
-  <div className="container">
-
-      <div className="map">
-        <Map
-          drawingMode={drawingMode}
-          setDrawingMode={setDrawingMode}
-          onPolygonComplete={onPolygonComplete}
-          shapes={shapes}
-          selectedShapeIndex={selectedShapeIndex}
-          isLoaded={isLoaded}
-        />
-      </div>
-      <div className="dropdown">
+{!showAreaSelection && (
+<div className="dropdown">
+  
+  
         <h2 style={{color:"#1565c0"}}>Select Area</h2>
+        <div className="inner-dropdownDiv">
         <input
     type="text"
     placeholder="Enter Area Name"
@@ -124,19 +116,22 @@ export default function MapDisplay({selectedCoordinates}) {
       padding: ".40rem .35rem",
       marginTop: "1rem",
       marginBottom:"1rem",
+      marginRight:"1rem",
       backgroundColor: "#1565c0",
       color: "white",
       // borderStyle: "none",
       // borderRadius: "1rem",
     }}
   />
+
         <select
-        style={{padding: ".40rem 1rem",
+        style={{
+          padding: ".40rem 1rem",
           backgroundColor: "#1565c0",
           color: "white",
           borderStyle: "none",
          }}
-          value={selectedShapeIndex}
+          value={selectedShapeIndex || ""}
           onChange={(e) => setSelectedShapeIndex(Number(e.target.value))}
         >
           <option value="">Select an Area</option>
@@ -147,6 +142,8 @@ export default function MapDisplay({selectedCoordinates}) {
           ))}
         </select>
 
+        </div>
+
 
         <button style={{
           marginTop:"1rem",
@@ -154,25 +151,34 @@ export default function MapDisplay({selectedCoordinates}) {
           backgroundColor: "#1565c0",
           color: "white",
           borderStyle: "none",
-          borderRadius:".2rem"
+          borderRadius:".2rem",
+          marginLeft:"2rem",
+
           }}
            onClick={onSaveButtonClick}>
             Save Area
             </button>
-{/* 
-        {selectedShapeIndex !== null && (
-          <div>
-            <h2 style={{color:"rgb(21, 101, 192) "}}>Coordinates:</h2>
-            <ul>
-              {shapes[selectedShapeIndex].map((point, index) => (
-                <li key={index} style={{color:"rgb(21, 101, 192)"}}>
-                  Latitude: {point.lat}, Longitude: {point.lng}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )} */}
+
       </div>
+              )} 
+           {/* <div className='viewAreaListDiv'> */}
+           {/* <Button  variant="contained" color="primary" style={{marginBottom:"3rem"}} onClick={()=>{setTable(!table); navigate('/Dashboard/area')}}>View Area Listing</Button> */}
+           {/* </div> */}
+  <div className="container">
+
+      <div className="map">
+        <Map
+          drawingMode={drawingMode}
+          setDrawingMode={setDrawingMode}
+          onPolygonComplete={onPolygonComplete}
+          shapes={shapes}
+          selectedShapeIndex={selectedShapeIndex}
+          isLoaded={isLoaded}
+          
+        />
+      </div>
+      
+
     </div>
     </div>
     }
@@ -183,7 +189,7 @@ function Map({ drawingMode, setDrawingMode, onPolygonComplete, shapes ,selectedS
   const center = useMemo(() => ({ lat: 31.582045, lng: 74.329376 }), []);
   const [map,setMap] = useState();
 
-  useEffect(()=>{console.log("shapes",shapes);},[shapes])
+  // useEffect(()=>{console.log("shapes",shapes);},[shapes])
 
   const drawingOptions = {
     drawingControl: true,
@@ -206,9 +212,9 @@ function Map({ drawingMode, setDrawingMode, onPolygonComplete, shapes ,selectedS
       />
 
       {shapes.length>0 && shapes.map((shape, index) => {
-        console.log("rendering",shape);
+        // console.log("rendering",shape);
         return(
-        <Polygon ref={(ref)=>console.log(ref)}
+        <Polygon 
           paths={shape}
           editable={true}
           options={{

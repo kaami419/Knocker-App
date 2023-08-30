@@ -22,6 +22,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { NavLink } from 'react-router-dom';
 
 
 
@@ -90,7 +91,7 @@ const req= "192.168.100.18"
 
         try {
           const response = await axios.post(
-            'http://192.168.100.18:3001/api/auth/signIn',
+            'https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/auth/signIn',
             formData,
             {
               auth: {
@@ -99,21 +100,23 @@ const req= "192.168.100.18"
               },
             }
           );
-          console.log("data", response.data.user.email)
+          // console.log("data", response.data.user.email)
       
           if (response.status === 200) {
             const token = response.data.token;
+            // handleModalOpen('Success: Sign-in successful.');
+            // alert("Success: Sign-in successful.")
             localStorage.setItem('token', token);
-            handleModalOpen('Success', 'Sign-in successful.');
-            console.log('Sign-in successful');
-            navigate('/')
-          } else {
-            console.error('Sign-in failed');
-            handleModalOpen('Error', 'Sign-in failed. Please check your credentials.');
-          }
+           
+            // console.log('Sign-in successful');
+            navigate('/Dashboard/knockerTable')
+          } 
         } catch (error) {
-          console.error('Error occurred during sign-in:', error);
-          handleModalOpen('Error', 'An error occurred during sign-in. Please try again later.');
+          // console.error('Error occurred during sign-in:', error);
+          handleModalOpen(`${error.response.data.message}`);
+          // alert(``)
+          // console.log('Error response:', error.response.statusText);
+
         }
       };
   
@@ -185,7 +188,7 @@ const req= "192.168.100.18"
                   control={<Checkbox value="remember" color="primary" />}
                   label="Remember me"
                 />
-                {/* <NavLink to={'/'}> */}
+                {/* <NavLink to={'/Dashboard'}> */}
                 <Button
                 // onClick={handleSubmit}
                   type="submit"

@@ -15,13 +15,15 @@ export default function PreRegisterationTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [knocker, setKnocker] = React.useState(false);
   const [data, setData] = React.useState([]); 
-  const [columns, setColumns] = React.useState([]); 
+  const [columns, setColumns] = React.useState([]);
+  const [idCounter, setIdCounter] = React.useState(1);
+ 
   const token = localStorage.getItem('token');
 
   React.useEffect(() => {
 const req= "192.168.100.18"
     
-    axios.get('http://192.168.100.18:3001/api/knocker/pre/registation', {
+    axios.get('https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/knocker/pre/registation', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -29,7 +31,7 @@ const req= "192.168.100.18"
       .then(response => {
         const fetchedData = response.data.data;
         setData(fetchedData); 
-        console.log("fetchedData:",fetchedData );
+        // console.log("fetchedData:",fetchedData );
         
         if (fetchedData.length > 0) {
           const dynamicColumns = Object.keys(fetchedData[0]).map(key => {
@@ -74,7 +76,7 @@ const req= "192.168.100.18"
             };
           });
           const filteredColumns = dynamicColumns.filter(column => (
-            column.id !== 'enable' && column.id !== 'deleted' && column.id !== 'updatedAt'
+            column.id !== 'enable' && column.id !== 'deleted' && column.id !== 'updatedAt' && column.id !== 'id'
           ));
   
           setColumns(filteredColumns);
@@ -105,12 +107,23 @@ const req= "192.168.100.18"
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
+                <TableCell
+                        key={"Id"}
+                        align="left"
+                        style={{
+                          // minWidth,
+                          color: "#1565c0",
+                          backgroundColor: "lightgray",
+                          paddingRight:"4rem"
+                        }}
+                      >
+                        Id
+                      </TableCell>
                   {columns.map((column) => (
                     <TableCell
                       key={column.id}
                       align="left"
-                      style={{ minWidth: column.minWidth, color: '#1565c0' }}
-                    >
+                      style={{ minWidth: column.minWidth, color: '#1565c0',backgroundColor: "lightgray"}} >
                       {column.label}
                     </TableCell>
                   ))}
@@ -121,6 +134,9 @@ const req= "192.168.100.18"
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, rowIndex) => (
                     <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
+                          <TableCell align="left">
+        {idCounter + rowIndex}
+      </TableCell>  
                       {columns.map((column) => {
                         const value = row[column.id];
 
@@ -147,7 +163,8 @@ const req= "192.168.100.18"
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 100]}
+          style={{ color: '#1565c0' }}
+            rowsPerPageOptions={[5, 10, 25, 100, 500, 1000]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}

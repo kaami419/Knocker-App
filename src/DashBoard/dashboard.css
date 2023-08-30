@@ -3,13 +3,19 @@
     color: #1565c0 ;
 }
 .navbarbutton2{
-    padding: .5rem 1rem ;
+    padding: .5rem 1.5rem ;
     margin-left: .5rem;
     color: #1565c0 ;
+    border-radius: .5rem;
+    background-color: whitesmoke;
+
 }
 
 .navbarbutton2:hover {
     /* opacity: 50%; */
+ border-radius: .5rem;
+    /* background-color: white; */
     background-color: transparent;
-    color: white;
+    border-color: white;
+    color: whitesmoke ;
   }

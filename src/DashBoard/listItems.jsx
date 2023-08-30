@@ -7,13 +7,14 @@ import PeopleIcon from '@mui/icons-material/People';
 import RoomTwoToneIcon from '@mui/icons-material/RoomTwoTone';
 import HowToRegTwoToneIcon from '@mui/icons-material/HowToRegTwoTone';
 import PinDropIcon from '@mui/icons-material/PinDrop';
+import PersonPinCircleOutlinedIcon from '@mui/icons-material/PersonPinCircleOutlined';
 
-export const mainListItems = (handleSidebarItemClick) => (
+export const MainListItems = ({handleSidebarItemClick}) => (
   <React.Fragment>
     <ListSubheader component="div" inset style={{  color: '#1565c0' }}>
       Employees
     </ListSubheader>
-    <ListItemButton onClick={() => handleSidebarItemClick('table')}>
+    <ListItemButton onClick={() => handleSidebarItemClick('knockerTable')}>
       <ListItemIcon>
         <PeopleIcon style={{  color: '#1565c0' }}/>
       </ListItemIcon>
@@ -22,7 +23,7 @@ export const mainListItems = (handleSidebarItemClick) => (
   </React.Fragment>
 );
 
-export const secondaryListItems = (handleSidebarItemClick) => (
+export const SecondaryListItems = ({handleSidebarItemClick}) => (
   <React.Fragment>
     <ListSubheader component="div" inset style={{  color: '#1565c0' }}>
       Registration
@@ -36,7 +37,7 @@ export const secondaryListItems = (handleSidebarItemClick) => (
   </React.Fragment>
 );
 
-export const thirdListItems = (handleSidebarItemClick) => (
+export const ThirdListItems = ({handleSidebarItemClick}) => (
   <React.Fragment>
     <ListSubheader component="div" inset style={{  color: '#1565c0' }}>
       Location
@@ -50,7 +51,7 @@ export const thirdListItems = (handleSidebarItemClick) => (
   </React.Fragment>
 );
 
-export const fourthListItems = (handleSidebarItemClick) => (
+export const FourthListItems = ({handleSidebarItemClick}) => (
   <React.Fragment>
     <ListSubheader component="div" inset style={{  color: '#1565c0' }}>
       Pins
@@ -60,6 +61,20 @@ export const fourthListItems = (handleSidebarItemClick) => (
         <PinDropIcon style={{  color: '#1565c0' }}/>
       </ListItemIcon>
       <ListItemText primary="Pins" />
+    </ListItemButton>
+  </React.Fragment>
+);
+
+export const FifthListItems = ({handleSidebarItemClick}) => (
+  <React.Fragment>
+    <ListSubheader component="div" inset style={{  color: '#1565c0' }}>
+      Area Assigning
+    </ListSubheader>
+    <ListItemButton onClick={() => handleSidebarItemClick('assignArea')}>
+      <ListItemIcon>
+        <PersonPinCircleOutlinedIcon style={{  color: '#1565c0' }}/>
+      </ListItemIcon>
+      <ListItemText primary="Assign" />
     </ListItemButton>
   </React.Fragment>
 );

@@ -18,15 +18,18 @@ import Grid from '@mui/material/Grid';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
-import { fourthListItems, mainListItems, secondaryListItems } from './listItems';
-import { thirdListItems } from './listItems';
+import { FourthListItems, MainListItems, SecondaryListItems, FifthListItems , ThirdListItems} from './listItems';
 import './dashboard.css'
 import { NavLink } from 'react-router-dom';
 import StickyHeadTable from './Table/Table';
 import PreRegisterationTable from './Table/PreRegisterationTable';
 import AreaTable from './Table/AreaTable';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PinTable from './Table/PinTable';
+import AssignAreaToKnocker from '../AssignArea/AssignArea';
+import UserSignUp from '../Auth/User/Signup/signUp';
+import MapDisplay from '../Map/Map';
+import CreatePin from '../Pins/Pins';
 
 
 
@@ -84,16 +87,56 @@ export default function Dashboard() {
 
 
   const [open, setOpen] = React.useState(true);
-  const [selectedComponent, setSelectedComponent] = React.useState('table'); 
+  // const [selectedComponent, setSelectedComponent] = React.useState('knockerTable'); 
+  // const [selectedComponentLink, setSelectedComponentLink] = React.useState('knockerTable'); 
+  const { selectedComponent } = useParams();
   
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  const handleSidebarItemClick = (componentName) => {
-    setSelectedComponent(componentName);
-    // navigate(`/${componentName}`)
+  // const handleSidebarItemClick = (componentName) => {
+
+  //   setSelectedComponent(componentName);
+  //   if (selectedComponent === 'knockerTable' ) {
+  //     navigate('/Dashboard/knockersList')
+  //   }
+  //   if (selectedComponent === 'pre-registration') {
+  //     navigate('/Dashboard/preRegisteration')
+      
+  //   }
+  //   if (selectedComponent === 'area' ) {
+  //     navigate('/Dashboard/area')
+  //   }
+  //   if (selectedComponent === 'pins' ) {
+  //     navigate('/Dashboard/pinsList')
+  //   }
+  //   if (selectedComponent === 'assignArea' ) {
+  //     navigate('/Dashboard/assignArea')
+  //   }
     
+  // };
+
+  const handleSidebarItemClick = (componentName) => {
+    if (componentName === 'knockerTable') {
+      navigate('/Dashboard/knockerTable');
+    } else if (componentName === 'pre-registration') {
+      navigate('/Dashboard/pre-registration');
+    } else if (componentName === 'area') {
+      navigate('/Dashboard/area');
+    } else if (componentName === 'pins') {
+      navigate('/Dashboard/pins');
+    } else if (componentName === 'assignArea') {
+      navigate('/Dashboard/assignArea');
+    }else if (componentName === 'signUp') {
+      navigate('/Dashboard/signUp');
+    }else if (componentName === 'map') {
+      navigate('/Dashboard/map');
+    }else if (componentName === 'createPin') {
+      navigate('/Dashboard/createPin');
+    }
+    // setSelectedComponent(componentName);
+
   };
 
 
@@ -127,7 +170,7 @@ export default function Dashboard() {
             </IconButton>
             <Typography
               component="h1"
-              variant="h6"
+              variant="h5"
               color="inherit"
               noWrap
               sx={{ flexGrow: 1 }}
@@ -135,7 +178,7 @@ export default function Dashboard() {
               Dashboard
             </Typography>
 
-           <NavLink to={'./UserSignin'}>
+           <NavLink to={'/'}>
            <button className='navbarbutton2' onClick={handleLogout}>Logout</button>
            </NavLink>
           </Toolbar>
@@ -157,13 +200,15 @@ export default function Dashboard() {
           </Toolbar>
           <Divider />
           <List component="nav">
-          {mainListItems(handleSidebarItemClick)}
+          <MainListItems handleSidebarItemClick={handleSidebarItemClick}/>
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems(handleSidebarItemClick)}
+            <SecondaryListItems handleSidebarItemClick={handleSidebarItemClick}/>
             <Divider sx={{ my: 1 }} />
-            {thirdListItems(handleSidebarItemClick)}
+            <ThirdListItems handleSidebarItemClick={handleSidebarItemClick}/>
             <Divider sx={{ my: 1 }} />
-            {fourthListItems(handleSidebarItemClick)}
+            <FourthListItems handleSidebarItemClick={handleSidebarItemClick}/>
+            <Divider sx={{my:1}}/>
+            <FifthListItems handleSidebarItemClick={handleSidebarItemClick}/>
           </List>
         </Drawer>
         <Box
@@ -183,10 +228,20 @@ export default function Dashboard() {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 
-                 {selectedComponent === 'table' && <StickyHeadTable />}
+                 {selectedComponent === 'knockerTable' && <StickyHeadTable />}
                 {selectedComponent === 'pre-registration' && <PreRegisterationTable />}
-                {selectedComponent === 'area' && <AreaTable />}
+                {selectedComponent === 'area' && <AreaTable showAreaSelection={true} />}
                 {selectedComponent === 'pins' && <PinTable />}
+                {selectedComponent=== 'assignArea' && <AssignAreaToKnocker/>}
+                {selectedComponent=== 'createKnocker' && <UserSignUp/>}
+                {selectedComponent=== 'map' && <MapDisplay/>}
+                {selectedComponent=== 'createPin' && <CreatePin/>}
+
+
+
+
+
+                
                 
               </Grid>
             </Grid>

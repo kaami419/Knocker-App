@@ -22,3 +22,61 @@ width: 100%;
     /* padding: .5rem 1rem ; */
     
 }
+
+.modalDiv{
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center ; */
+    /* border: 1px solid red; */
+    /* text-align: center; */
+}
+
+.modal-content {
+  width: 70%;
+  /* text-align: left; */
+    /* position: absolute;
+    top: 50%;
+    left: 50%; */
+    /* transform: translate(-50%, -50%); */
+    background-color: white;
+    padding: 50px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* margin-bottom: 10rem; */
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Make sure it's above other content */
+  }
+  
+  /* Style for the modal content */
+  .modal-content2 {
+    width: 70%;
+  text-align: left;
+    /* position: absolute;
+    top: 50%;
+    left: 50%; */
+    /* transform: translate(-50%, -50%); */
+    background-color: white;
+    padding: 50px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  .knockerList{
+    width: 100%;
+    display: flex;
+    /* justify-content: right ; */
+    text-align: center;
+    
+  }

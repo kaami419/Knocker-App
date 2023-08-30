@@ -12,6 +12,8 @@ import UserSignUp from '../../Auth/User/Signup/signUp';
 import CreatePin from '../../Pins/Pins';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function PinTable() {
   const [page, setPage] = React.useState(0);
@@ -21,39 +23,23 @@ export default function PinTable() {
   const [columns, setColumns] = React.useState([]); 
   const token = localStorage.getItem('token');
   const [selectedPin, setSelectedPin] = React.useState(null);
+  const [idCounter, setIdCounter] = React.useState(1);
+  const [editingPin, setEditingPin] = React.useState(false);
 
-  
 
-//   const handleEditIconClick = async (pinData) => {
-//     try {
-//       const response = await axios.put(`http://192.168.100.18:3001/api/pin?id=${pinData.id}`, {
-//         name: pinData.name,
-//         image: pinData.image
-       
-//       },{
-//         headers: {
-//             Authorization: `Bearer ${token}` 
-//           }
-//       });
-//       console.log('Pin updated:', response.data);
-//       setSelectedPin(pinData);
-//     setPin(true); // Show the CreatePin component
-//       // Refresh the pin data or handle updates as needed
-//     } catch (error) {
-//       console.error('Error updating pin:', error);
-//     }
-//   };
+  const navigate=useNavigate();
 
 const handleEditIconClick = (pinData) => {
     setSelectedPin(pinData);
     setPin(true);
+    setEditingPin(true);
   };
 
 
   React.useEffect(() => {
 const req= "192.168.100.18"
     
-    axios.get(`http://${req}:3001/api/pin`, {
+    axios.get(`https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/pin`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -61,7 +47,7 @@ const req= "192.168.100.18"
       .then(response => {
         const fetchedData = response.data.data;
         setData(fetchedData); 
-        console.log("fetchedData:",fetchedData );
+        // console.log("fetchedData:",fetchedData );
         
         if (fetchedData.length > 0) {
           const dynamicColumns = Object.keys(fetchedData[0]).map(key => {
@@ -106,7 +92,7 @@ const req= "192.168.100.18"
             };
           });
           const filteredColumns = dynamicColumns.filter(column => (
-            column.id !== 'enable' && column.id !== 'deleted' && column.id !== 'updatedAt'
+            column.id !== 'enable' && column.id !== 'deleted' && column.id !== 'updatedAt' && column.id !=='id'
           ));
   
           setColumns(filteredColumns);
@@ -130,7 +116,7 @@ const req= "192.168.100.18"
   const handleDeleteIconClick = async (pinData) => {
     try {
       const response = await axios.delete(
-        `http://192.168.100.18:3001/api/pin?id=${pinData.id}`,
+        `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/pin?id=${pinData.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -144,13 +130,13 @@ const req= "192.168.100.18"
       setData(updatedData);
   
      
-      alert('Pin deleted successfully');
+      // alert('Pin deleted successfully');
   
     } catch (error) {
       console.error('Error deleting pin:', error);
   
    
-      alert('Error deleting pin. Please try again.');
+      // alert('Error deleting pin. Please try again.');
     }
   };
   
@@ -159,23 +145,35 @@ const req= "192.168.100.18"
   return (
     <div>
       {pin ? 
-        <CreatePin selectedPin={selectedPin}/>
+        <CreatePin selectedPin={selectedPin} editingPin={editingPin}/>
         :
         <div>
         <div className='tableBtnDiv'>
-        <button className='tableBtn' onClick={()=>{setPin(!pin)}}>Create Pin</button>
+        <Button variant='contained' color='primary' onClick={()=>{setPin(!pin);navigate('/Dashboard/createPin')}}>Create Pin</Button>
           </div>
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 550 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
+                <TableCell
+                        key={"Id"}
+                        align="left"
+                        style={{
+                          // minWidth,
+                          color: "#1565c0",
+                          backgroundColor: "lightgray",
+                          paddingRight:"4rem"
+                        }}
+                      >
+                        Id
+                      </TableCell>
                   {columns.map((column) => (
                     
                     <TableCell
                       key={column.id}
                       align="left"
-                      style={{ minWidth: column.minWidth, color: '#1565c0' }}
+                      style={{ minWidth: column.minWidth, color: '#1565c0', backgroundColor:"lightgray" }}
                     >
                       {column.label}
                     </TableCell>
@@ -184,13 +182,13 @@ const req= "192.168.100.18"
                   ))}
                 <TableCell
                    align="left"
-                   style={{  color: '#1565c0' }}
+                   style={{  color: '#1565c0',  backgroundColor:"lightgray" }}
                    >
                     Edit
                   </TableCell>
                   <TableCell
                    align="left"
-                   style={{  color: '#1565c0' }}
+                   style={{  color: '#1565c0',  backgroundColor:"lightgray" }}
                    >
                     Delete
                   </TableCell>
@@ -202,6 +200,10 @@ const req= "192.168.100.18"
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, rowIndex) => (
                     <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
+
+<TableCell align="left">
+{data.length - rowIndex} 
+      </TableCell>  
                         
                       {columns.map((column) => {
                         const value = row[column.id];
@@ -250,7 +252,8 @@ const req= "192.168.100.18"
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 100]}
+           style={{ color: '#1565c0' }}
+            rowsPerPageOptions={[5, 10, 25, 100, 500,1000]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}

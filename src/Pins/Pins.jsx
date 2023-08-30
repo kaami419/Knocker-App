@@ -15,13 +15,14 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import PinTable from '../DashBoard/Table/PinTable';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 
 
 const defaultTheme = createTheme({});
 
-export default function CreatePin({selectedPin}) {
+export default function CreatePin({selectedPin, editingPin}) {
     const [pin, setPin]= React.useState(false);
     const [pinData, setPinData] = React.useState({
         name: '',
@@ -48,13 +49,13 @@ export default function CreatePin({selectedPin}) {
         };
       
         try {
-          const response = await axios.post('http://192.168.100.18:3001/api/pin', pinData,{
+          const response = await axios.post('https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/pin', pinData,{
             headers: {
               Authorization: `Bearer ${token}` 
             }
           });
           console.log('Pin created:', response.data);
-          alert('Pin created successfully');
+          // alert('Pin created successfully');
           setPin(!pin)
 
         } catch (error) {
@@ -66,7 +67,7 @@ export default function CreatePin({selectedPin}) {
       const handleUpdate = async () => {
         try {
           const response = await axios.put(
-            `http://192.168.100.18:3001/api/pin?id=${selectedPin.id}`,
+            `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/pin?id=${selectedPin.id}`,
             {
               name: pinData.name,
               image: pinData.image,
@@ -78,7 +79,7 @@ export default function CreatePin({selectedPin}) {
             }
           );
           console.log('Pin updated:', response.data);
-          alert('Pin updated successfully');
+          // alert('Pin updated successfully');
           setPin(!pin)
         } catch (error) {
           console.error('Error updating pin:', error);
@@ -92,15 +93,17 @@ export default function CreatePin({selectedPin}) {
           [name]: value,
         }));
       };
+
+      const navigate=useNavigate()
       
 
   return (
     <div>
     {pin?<PinTable/>:
     <div>
-                   <div className='viewAreaListDiv'>
-           <button className='gotoDashboard' onClick={()=>{setPin(!pin)}}>View Pins Listing</button>
-           </div>
+                   {/* <div className='viewAreaListDiv'>
+           <Button variant='contained' color='primary' onClick={()=>{setPin(!pin); navigate("/Dashboard/pins")}}>View Pins Listing</Button>
+           </div> */}
     <ThemeProvider theme={defaultTheme} >
       <Container component="main" maxWidth="xs" style={{backgroundColor:"white"}}>
         <CssBaseline />
@@ -143,7 +146,19 @@ export default function CreatePin({selectedPin}) {
             //   autoComplete="current-Image"
             //   autoFocus
             />
-            <Button
+             {editingPin ? (
+                <Button
+                // style={{marginLeft:"7.5rem"}}
+            onClick={handleUpdate}
+            halfWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Update Pin
+          </Button>
+            
+             ) :(
+              <Button
               type="submit"
               halfWidth
               variant="contained"
@@ -151,15 +166,7 @@ export default function CreatePin({selectedPin}) {
             >
               Create This Pin
             </Button>
-            <Button
-            style={{marginLeft:"7.5rem"}}
-        onClick={handleUpdate}
-        halfWidth
-        variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-      >
-        Update Pin
-      </Button>
+             )}
 
           </Box>
         </Box>
