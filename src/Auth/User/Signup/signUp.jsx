@@ -25,6 +25,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
+import { CircularProgress } from '@mui/material';
 
 
 const defaultTheme = createTheme();
@@ -43,6 +44,8 @@ export default function UserSignUp({selectedUser, editingPin}) {
   const [openModal, setOpenModal] = React.useState(false);
   const [modalTitle, setModalTitle] = React.useState('');
   const [modalContent, setModalContent] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const [formData, setFormData] = React.useState({
     firstName: selectedUser ? selectedUser.firstName : '',
     lastName: selectedUser ? selectedUser.lastName : '',
@@ -50,6 +53,7 @@ export default function UserSignUp({selectedUser, editingPin}) {
     email: selectedUser ? selectedUser.email: '',
     phone: selectedUser ? selectedUser.phone: '',
     password: selectedUser ? selectedUser.password: '',
+    userType: "Knocker"
   });
 
   const navigate= useNavigate()
@@ -85,7 +89,6 @@ export default function UserSignUp({selectedUser, editingPin}) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // console.log("token",token);
     
     const data = new FormData(event.currentTarget);
   
@@ -96,7 +99,7 @@ export default function UserSignUp({selectedUser, editingPin}) {
       phone: data.get('phone'), 
       email: data.get('email'),
       userName: data.get('userName'),
-      userType: data.get('userType')
+      userType: "Knocker"
     };
 
     if (!formData.firstName) {
@@ -113,11 +116,6 @@ export default function UserSignUp({selectedUser, editingPin}) {
       setUserNameError("User Name is required.");
     } else {
       setUserNameError("");
-    }
-    if (!formData.userType) {
-      setUserTypeError("User Type is required.");
-    } else {
-      setUserTypeError("");
     }
     if (!formData.email) {
       setEmailError("Email is required.");
@@ -149,10 +147,10 @@ export default function UserSignUp({selectedUser, editingPin}) {
       return; 
     }
 const req= "192.168.100.18"
-
+setIsLoading(true);
   
     try {
-      const response = await axios.post('https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/admin/create/user', formData,{
+      const response = await axios.post('http://192.168.100.18:3001/api/admin/create/user', formData,{
         headers: {
           Authorization: `Bearer ${token}` 
         }
@@ -229,7 +227,7 @@ const req= "192.168.100.18"
 
     try {
       const response = await axios.put(
-        `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/knocker?id=${selectedUser.id}`,{
+        `http://192.168.100.18:3001/api/knocker?id=${selectedUser.id}`,{
         updatedUserData},{
           headers:{
             Authorization: `Bearer ${token}`,
@@ -238,7 +236,6 @@ const req= "192.168.100.18"
         }
       );
 
-      // console.log('User updated:', selectedUser.id);
       toast.success('Knocker updated successfully!', {
         position: 'top-right',
         autoClose: 3000,
@@ -248,15 +245,13 @@ const req= "192.168.100.18"
         draggable: true,
         progress: undefined,
       });
-      // alert(`Success: ${response.data.message}`)
       setTable(!table)
 
       // navigate('/Dashboard/knockersList')
     } catch (error) {
-      setErrorMessage(error.response.data.message); 
+      // setErrorMessage(error.response.data.message); 
 
-      // console.error('Error updating user:', error);
-      toast.error(`Error: ${error}`, {
+      toast.error(`${error.response.data.message}`, {
         position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
@@ -265,7 +260,6 @@ const req= "192.168.100.18"
         draggable: true,
         progress: undefined,
       });
-      // alert(error.response.data.message)
     }
   };
 
@@ -313,7 +307,7 @@ const req= "192.168.100.18"
                   fullWidth
                   id="firstName"
                   label="First Name"
-                  value={formData.firstName} // Bind to formData.firstName                  
+                  value={formData.firstName}               
                   autoFocus
                   error={firstNameError !== ''}
                   helperText={firstNameError}
@@ -328,7 +322,7 @@ const req= "192.168.100.18"
                   id="lastName"
                   label="Last Name"
                   name="lastName"
-                  value={formData.lastName} // Bind to formData.firstName                  
+                  value={formData.lastName}                 
                   autoComplete="family-name"
                   error={lastNameError !== ''}
                   helperText={lastNameError}
@@ -343,28 +337,29 @@ const req= "192.168.100.18"
                 fullWidth
                 name="userName"
                 label="User Name"
-                value={formData.userName} // Bind to formData.firstName              
+                value={formData.userName}            
                 id="userName"
-                // autoComplete="current-userName"
                 error={userNameError !== ''}
                   helperText={userNameError}
                   onChange={handleInputChange}
 
               />
               </Grid>
+              
               <Grid item xs={12} sm={6}>
               <TextField
-                margin="normal"
-                required
-                fullWidth
-              name="userType"
-              label="User Type"            
-                id="userType"
-              autoComplete="current-userType"
-              defaultValue={"Knocker"}
-              error={userTypeError !== ''}
-              helperText={userTypeError}
-              onChange={handleInputChange}
+              margin="normal"
+               required
+               fullWidth
+                name="phone"
+               label="Phone Number"
+                type="number"
+                value={formData.phone} 
+                id="phone"
+                autoComplete="current-phone"
+                error={phoneError !== ''}
+                  helperText={phoneError}
+                  onChange={handleInputChange}
 
               />
               </Grid>
@@ -375,7 +370,7 @@ const req= "192.168.100.18"
                   id="email"
                   label="Email Address"
                   name="email"
-                  value={formData.email} // Bind to formData.firstName                  
+                  value={formData.email}                  
                   autoComplete="email"
                   error={emailError !== ''}
                   helperText={emailError}
@@ -391,7 +386,7 @@ const req= "192.168.100.18"
                   label="Password"
                   type="password"
                   id="password"
-                  value={formData.password} // Bind to formData.firstName                  
+                  value={formData.password}                  
                   autoComplete="new-password"
                   error={passwordError !== ''}
                   helperText={passwordError}
@@ -400,32 +395,26 @@ const req= "192.168.100.18"
                   
                 />
               </Grid>
-              <Grid item xs={12}>
-              <TextField
-              margin="normal"
-               required
-               fullWidth
-                name="phone"
-               label="Phone Number"
-                type="number"
-                value={formData.phone} // Pre-filled value
-                id="phone"
-                autoComplete="current-phone"
-                error={phoneError !== ''}
-                  helperText={phoneError}
-                  onChange={handleInputChange}
-
-              />
-              </Grid>
+  
 
             </Grid>
-            <Grid>
-            {editingPin ? (
+            <Grid >
+            {isLoading ? (
+                  <Button 
+                  halfwidth="true"
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  >   
+          <CircularProgress color="inherit" size={24} /> 
+          </Button>
+        ) : (
+            editingPin ? (
               <Button
-              style={{ marginBottom: ".90rem"}}
+              style={{ marginBottom: "1.90rem"}}
               halfwidth='true'
           color="primary"
           variant="contained"
+          sx={{ mt: 3, mb: 5 }}
           onClick={handleUpdateUser}
         >
           Update
@@ -433,7 +422,6 @@ const req= "192.168.100.18"
           
             ) : (
               <Button
-            // className='createKnockerBtn'
             color='primary'
               type="submit"
               halfwidth='true'
@@ -442,15 +430,9 @@ const req= "192.168.100.18"
             >
               Create
             </Button>
-            )}
+            )
+        )}
       </Grid>
-            <Grid container justifyContent="flex-end">
-              {/* <Grid item>
-                <NavLink to={'/UserSignin'} variant="body2" style={{textDecorationColor: 'rgba(25, 118, 210, 0.4)',color: '#1976d2'}}>
-                  Already have an account? Sign in
-                </NavLink>
-              </Grid> */}
-            </Grid>
           </Box>
         </Box>
 
@@ -458,7 +440,7 @@ const req= "192.168.100.18"
     </ThemeProvider>
 }
 
-<Dialog
+{/* <Dialog
         open={openModal}
         onClose={handleModalClose}
         aria-labelledby="modal-title"
@@ -472,7 +454,7 @@ const req= "192.168.100.18"
             Close
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }

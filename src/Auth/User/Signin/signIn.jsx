@@ -26,6 +26,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { NavLink } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -39,6 +40,7 @@ const [modalTitle, setModalTitle] = React.useState('');
 const [modalContent, setModalContent] = React.useState('');
 const [emailError, setEmailError] = React.useState('');
 const [passwordError, setPasswordError] = React.useState('');
+const [isLoading, setIsLoading] = useState(false);
 
 const handleModalClose = () => {
   setOpenModal(false);
@@ -92,9 +94,10 @@ const validateForm = () => {
         }
 const req= "192.168.100.18"
 
+setIsLoading(true); 
         try {
           const response = await axios.post(
-            'https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/auth/signIn',
+            'http://192.168.100.18:3001/api/auth/signIn',
             formData,
             {
               auth: {
@@ -103,7 +106,7 @@ const req= "192.168.100.18"
               },
             }
           );
-          // console.log("data", response.data.user.email)
+
       
           if (response.status === 200) {
             const token = response.data.token;
@@ -153,7 +156,7 @@ const req= "192.168.100.18"
            sm={4}
            md={7}
         sx={{
-           backgroundImage: 'url(https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTI2MDU3OTA&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080)',
+           backgroundImage: 'url(https://wallpaperboat.com/wp-content/uploads/2019/10/free-website-background-07-920x518.jpg)',
            backgroundRepeat: 'no-repeat',
              backgroundColor: (t) =>
                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -211,6 +214,14 @@ const req= "192.168.100.18"
                   label="Remember me"
                 />
                 {/* <NavLink to={'/Dashboard'}> */}
+                {isLoading ? (
+                  <Button  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  > Signing in  
+          <CircularProgress color="inherit" size={24} style={{marginLeft:".5rem"}} /> 
+          </Button>
+        ) : (
                 <Button
                 // onClick={handleSubmit}
                   type="submit"
@@ -220,14 +231,15 @@ const req= "192.168.100.18"
                 >
                   Sign In
                 </Button>
+        )}
                 {/* </NavLink> */}
 
                 <Grid container>
-                  <Grid item xs>
+                  {/* <Grid item xs>
                     <Link href="#" variant="body2">
                       Forgot password?
                     </Link>
-                  </Grid>
+                  </Grid> */}
                   {/* <Grid item>
                     <NavLink to={'/'} variant="body2" style={{textDecorationColor: 'rgba(25, 118, 210, 0.4)',color: '#1976d2'}}>
                       {"Don't have an account? Sign Up"}

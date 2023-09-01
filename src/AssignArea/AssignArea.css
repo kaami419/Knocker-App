@@ -1,19 +1,24 @@
 .container{
     width: 100%;
     /* border: 1px solid red; */
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    align-items: center;
-    height: 75vh;
+    align-items: center; */
+    /* height: 75vh; */
 
 }
 
 .AssignAreaDiv{
     /* display: flex; */
+    position: absolute;
+    top: 25%;
+    left: 25%;
     text-align: center;
-    width: 55%;
-    /* border: 1px solid red; */
+    width: 50%;
+    height: 50vh;
     background-color: white;
+    /* border: 1px solid red; */
+    /* background-color: white; */
     /* position: relative; */
     border-radius: .5rem;
 }
@@ -21,8 +26,9 @@
 .SubDiv{
     /* margin-top: 5rem; */
     width: 100%;
-    display: flex;
-    justify-content: center;
+    /* padding-bottom: 5rem; */
+    /* display: flex;
+    justify-content: space-around; */
     /* border: 1px solid blue; */
 }
 
@@ -38,14 +44,14 @@
     font-size: medium;
     margin-top: 1rem;
     border-radius: .5rem;
-    background-color: #1565c0;
-    color: white;
+    /* background-color: #1565c0; */
+    /* color: white; */
     /* margin-right: 1rem; */
     border-style: none;
 }
 
 
 .options{
-    background-color: #296dbb;
-    color: white;
+    /* background-color: #296dbb; */
+    /* color: white; */
 }

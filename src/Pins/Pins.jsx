@@ -18,6 +18,8 @@ import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import PinTable from '../DashBoard/Table/PinTable';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
+
 
 
 
@@ -26,6 +28,8 @@ const defaultTheme = createTheme({});
 
 export default function CreatePin({selectedPin, editingPin}) {
     const [pin, setPin]= React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+
     const [pinData, setPinData] = React.useState({
         name: '',
         image: '',
@@ -49,9 +53,10 @@ export default function CreatePin({selectedPin, editingPin}) {
           name: data.get('name'), 
           image: data.get('image'), 
         };
+setIsLoading(true);
       
         try {
-          const response = await axios.post('https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/pin', pinData,{
+          const response = await axios.post('http://192.168.100.18:3001/api/pin', pinData,{
             headers: {
               Authorization: `Bearer ${token}` 
             }
@@ -87,7 +92,7 @@ export default function CreatePin({selectedPin, editingPin}) {
       const handleUpdate = async () => {
         try {
           const response = await axios.put(
-            `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/pin?id=${selectedPin.id}`,
+            `http://192.168.100.18:3001/api/pin?id=${selectedPin.id}`,
             {
               name: pinData.name,
               image: pinData.image,
@@ -184,7 +189,16 @@ export default function CreatePin({selectedPin, editingPin}) {
             //   autoComplete="current-Image"
             //   autoFocus
             />
-             {editingPin ? (
+             {isLoading ? (
+                  <Button 
+                  halfwidth="true"
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  >   
+          <CircularProgress color="inherit" size={24} /> 
+          </Button>
+        ) : (
+             editingPin? (
                 <Button
                 // style={{marginLeft:"7.5rem"}}
             onClick={handleUpdate}
@@ -204,7 +218,8 @@ export default function CreatePin({selectedPin, editingPin}) {
             >
               Create This Pin
             </Button>
-             )}
+             )
+        )}
 
           </Box>
         </Box>

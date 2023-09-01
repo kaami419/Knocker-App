@@ -23,7 +23,7 @@ export default function PreRegisterationTable() {
   React.useEffect(() => {
 const req= "192.168.100.18"
     
-    axios.get('https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/knocker/pre/registation', {
+    axios.get('http://192.168.100.18:3001/api/knocker/pre/registration', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -47,14 +47,6 @@ const req= "192.168.100.18"
               return {
                 id: key,
                 label: 'Email',
-                minWidth: 170,
-                align: 'left',
-              };
-            }
-            if (key === 'phone') {
-              return {
-                id: key,
-                label: 'Contact Number',
                 minWidth: 170,
                 align: 'left',
               };
@@ -103,7 +95,8 @@ const req= "192.168.100.18"
         <UserSignUp/>
         :
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: 550 }}>
+          <TableContainer sx={{ maxHeight: 550 }}>   
+          {/* height: !data.length && 275  */}
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -114,17 +107,56 @@ const req= "192.168.100.18"
                           // minWidth,
                           color: "#1565c0",
                           backgroundColor: "lightgray",
-                          paddingRight:"4rem"
+                          paddingRight:"4rem",
+                          paddingLeft:"1rem"
                         }}
                       >
                         Id
                       </TableCell>
+                      {!data.length && (
+                    <>
+                      <TableCell
+                        key={'email'}
+                        align="left"
+                        style={{
+                          minWidth: 170,
+                          color: '#1565c0',
+                          backgroundColor: 'lightgray',
+                        }}
+                      >
+                        Email
+                      </TableCell>
+                      <TableCell
+                        key={'status'}
+                        align="left"
+                        style={{
+                          minWidth: 170,
+                          color: '#1565c0',
+                          backgroundColor: 'lightgray',
+                        }}
+                      >
+                        Status
+                      </TableCell>
+                      <TableCell
+                        key={'createdAt'}
+                        align="left"
+                        style={{
+                          minWidth: 170,
+                          color: '#1565c0',
+                          backgroundColor: 'lightgray',
+                        }}
+                      >
+                        Created At
+                      </TableCell>
+                    </>
+                  )}
                   {columns.map((column) => (
                     <TableCell
                       key={column.id}
                       align="left"
                       style={{ minWidth: column.minWidth, color: '#1565c0',backgroundColor: "lightgray"}} >
                       {column.label}
+                      
                     </TableCell>
                   ))}
                 </TableRow>
@@ -135,7 +167,7 @@ const req= "192.168.100.18"
                   .map((row, rowIndex) => (
                     <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
                           <TableCell align="left">
-        {idCounter + rowIndex}
+                          {data.length - rowIndex}
       </TableCell>  
                       {columns.map((column) => {
                         const value = row[column.id];

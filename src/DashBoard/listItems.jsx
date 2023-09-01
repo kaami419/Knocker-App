@@ -8,6 +8,7 @@ import RoomTwoToneIcon from '@mui/icons-material/RoomTwoTone';
 import HowToRegTwoToneIcon from '@mui/icons-material/HowToRegTwoTone';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 import PersonPinCircleOutlinedIcon from '@mui/icons-material/PersonPinCircleOutlined';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 export const MainListItems = ({handleSidebarItemClick}) => (
   <React.Fragment>
@@ -44,7 +45,7 @@ export const ThirdListItems = ({handleSidebarItemClick}) => (
     </ListSubheader>
     <ListItemButton onClick={() => handleSidebarItemClick('area')}>
       <ListItemIcon>
-        <RoomTwoToneIcon style={{  color: '#1565c0' }} />
+        <GpsFixedIcon style={{  color: '#1565c0' }} />
       </ListItemIcon>
       <ListItemText primary="Area" />
     </ListItemButton>
@@ -58,7 +59,7 @@ export const FourthListItems = ({handleSidebarItemClick}) => (
     </ListSubheader>
     <ListItemButton onClick={() => handleSidebarItemClick('pins')}>
       <ListItemIcon>
-        <PinDropIcon style={{  color: '#1565c0' }}/>
+        <RoomTwoToneIcon style={{  color: '#1565c0' }}/>
       </ListItemIcon>
       <ListItemText primary="Pins" />
     </ListItemButton>
@@ -75,6 +76,20 @@ export const FifthListItems = ({handleSidebarItemClick}) => (
         <PersonPinCircleOutlinedIcon style={{  color: '#1565c0' }}/>
       </ListItemIcon>
       <ListItemText primary="Assign" />
+    </ListItemButton>
+  </React.Fragment>
+);
+
+export const SixthListItems = ({handleSidebarItemClick}) => (
+  <React.Fragment>
+    <ListSubheader component="div" inset style={{  color: '#1565c0' }}>
+      Pins By Knockers
+    </ListSubheader>
+    <ListItemButton onClick={() => handleSidebarItemClick('DroppedPins')}>
+      <ListItemIcon>
+        <PinDropIcon   style={{  color: '#1565c0' }}/>
+      </ListItemIcon>
+      <ListItemText primary="Dropped Pins" />
     </ListItemButton>
   </React.Fragment>
 );

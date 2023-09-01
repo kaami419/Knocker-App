@@ -10,6 +10,10 @@ import axios from 'axios';
 import AreaTable from "../DashBoard/Table/AreaTable";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+// import Modal from 'react-modal';
+// import 'react-modal/styles.css' ;
+import {Modal} from "@mui/material";
+
 
 
 const libraries = ["drawing"];
@@ -20,7 +24,7 @@ const req= "192.168.100.18"
 const saveShapeData = async (name, coordinates) => {
   try {
     const path = coordinates.map((coord) => [coord.lat, coord.lng]);
-    const response = await axios.post('https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area', {
+    const response = await axios.post('http://192.168.100.18:3001/api/area', {
       name,
       path,
     },
@@ -46,12 +50,18 @@ export default function MapDisplay({selectedCoordinates, showAreaSelection}) {
   const [selectedShapeIndex, setSelectedShapeIndex] = useState(null);
   const [table, setTable] = React.useState(false);
   const [areaName, setAreaName] = useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
 
   const onPolygonComplete = (polygon) => {
     const paths = polygon.getPath().getArray().map((latLng) => ({ lat: latLng.lat(), lng: latLng.lng() }));
-    setShapes([...shapes, paths]);
+    setShapes([paths]);
     polygon.setMap(null); 
     setDrawingMode(null); 
+    setIsModalOpen(true); 
+    console.log("modal opening", isModalOpen);
   };
   // console.log("shapes here before", shapes);
   useEffect(() => {
@@ -81,8 +91,12 @@ export default function MapDisplay({selectedCoordinates, showAreaSelection}) {
    
   // };
   const onSaveButtonClick = () => {
-    if (selectedShapeIndex !== null && areaName.trim() !== "") {
-      const selectedShape = shapes[selectedShapeIndex];
+    setIsLoading(true);
+    // if (selectedShapeIndex !== null && areaName.trim() !== "") {
+     
+    //   const selectedShape = shapes[selectedShapeIndex];
+    if (shapes.length > 0) {
+      const selectedShape = shapes[0]; 
       saveShapeData(areaName, selectedShape); 
       toast.success(`Area Created Successfully!`, {
         position: 'top-right',
@@ -124,65 +138,93 @@ export default function MapDisplay({selectedCoordinates, showAreaSelection}) {
   <div>
 {table?<AreaTable/>:
 <div>
-{!showAreaSelection && (
+{ !showAreaSelection && ( 
+  <Modal
+  open={isModalOpen}
+  onRequestClose={() => setIsModalOpen(false)}
+  contentLabel="Select Area Modal"
+  className="modal"
+  overlayClassName="modal-overlay"
+>
+ <div className="closeBtn">
+  <div style={{display:"flex", justifyContent:"flex-end"}}>
+ <Button variant="contained" color="primary" style={{ marginTop:".5rem", marginRight:".5rem"}} onClick={() => setIsModalOpen(false)}>X</Button>
+ </div>
 <div className="dropdown">
-  
-  
-        <h2 style={{color:"#1565c0"}}>Select Area</h2>
-        <div className="inner-dropdownDiv">
-        <input
-    type="text"
-    placeholder="Enter Area Name"
-    value={areaName}
-    onChange={(e) => setAreaName(e.target.value)}
-    style={{
-      padding: ".40rem .35rem",
-      marginTop: "1rem",
-      marginBottom:"1rem",
-      marginRight:"1rem",
-      backgroundColor: "#1565c0",
-      color: "white",
-      // borderStyle: "none",
-      // borderRadius: "1rem",
+
+ 
+  {/* <h2 style={{color:"#1565c0"}}>Select Area</h2> */}
+  <div className="inner-dropdownDiv">
+<b>  <span style={{color:"#1565c0"}}>Area Name: </span> </b> <input
+type="text"
+placeholder="Enter Area Name"
+value={areaName}
+onChange={(e) => setAreaName(e.target.value)}
+style={{
+padding: "1rem 4rem",
+marginTop: "3rem",
+marginBottom:"1rem",
+boxShadow:"0 2px 4px rgba(0, 0, 0, 0.1)",
+// marginLeft:"1rem",
+// backgroundColor: "#1565c0",
+color: "#1565c0",
+// borderStyle: "none",
+// borderRadius: "1rem",  
+}}
+/>
+
+  {/* <select
+  style={{
+    padding: ".40rem 1rem",
+    backgroundColor: "#1565c0",
+    color: "white",
+    borderStyle: "none",
+   }}
+    value={selectedShapeIndex || ""}
+    onChange={(e) => setSelectedShapeIndex(Number(e.target.value))}
+  >
+    <option value="">Select an Area</option>
+    {shapes.map((shape, index) => (
+      <option key={index} value={index}>
+        Area {index + 1}
+      </option>
+    ))}
+  </select> */}
+
+  </div>
+  {isLoading ? (
+            <Button 
+            halfwidth="true"
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            >   
+    <CircularProgress color="inherit" size={24} /> 
+    </Button>
+  ) : (
+
+  <Button style={{
+    marginTop:"1rem",
+    padding: ".40rem 1rem",
+    backgroundColor: "#1565c0",
+    color: "white",
+    borderStyle: "none",
+    borderRadius:".2rem",
+    marginLeft:"5rem",
+
     }}
-  />
+    onClick={() => {
+      onSaveButtonClick();
+      setIsModalOpen(false); 
+    }}>
+      Save Area
+      </Button>
+  )}
 
-        <select
-        style={{
-          padding: ".40rem 1rem",
-          backgroundColor: "#1565c0",
-          color: "white",
-          borderStyle: "none",
-         }}
-          value={selectedShapeIndex || ""}
-          onChange={(e) => setSelectedShapeIndex(Number(e.target.value))}
-        >
-          <option value="">Select an Area</option>
-          {shapes.map((shape, index) => (
-            <option key={index} value={index}>
-              Area {index + 1}
-            </option>
-          ))}
-        </select>
-
-        </div>
+</div> 
+</div>
+</Modal>
 
 
-        <button style={{
-          marginTop:"1rem",
-          padding: ".40rem 1rem",
-          backgroundColor: "#1565c0",
-          color: "white",
-          borderStyle: "none",
-          borderRadius:".2rem",
-          marginLeft:"2rem",
-
-          }}
-           onClick={onSaveButtonClick}>
-            Save Area
-            </button>
-
-      </div>
               )} 
            {/* <div className='viewAreaListDiv'> */}
            {/* <Button  variant="contained" color="primary" style={{marginBottom:"3rem"}} onClick={()=>{setTable(!table); navigate('/Dashboard/area')}}>View Area Listing</Button> */}
@@ -225,7 +267,7 @@ function Map({ drawingMode, setDrawingMode, onPolygonComplete, shapes ,selectedS
   };
 
   return (
-    <GoogleMap zoom={10} center={center} mapContainerClassName="map-container" onLoad={(map)=>{setMap(map)}}>
+    <GoogleMap zoom={12} center={center} mapContainerClassName="map-container" onLoad={(map)=>{setMap(map)}}>
       <DrawingManager onOverlayComplete={(e)=>console.log(e)}
         options={drawingOptions}
         onPolygonComplete={onPolygonComplete}

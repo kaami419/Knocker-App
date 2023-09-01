@@ -18,7 +18,7 @@ import Grid from '@mui/material/Grid';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
-import { FourthListItems, MainListItems, SecondaryListItems, FifthListItems , ThirdListItems} from './listItems';
+import { FourthListItems, MainListItems, SecondaryListItems, FifthListItems , ThirdListItems, SixthListItems} from './listItems';
 import './dashboard.css'
 import { NavLink } from 'react-router-dom';
 import StickyHeadTable from './Table/Table';
@@ -30,6 +30,7 @@ import AssignAreaToKnocker from '../AssignArea/AssignArea';
 import UserSignUp from '../Auth/User/Signup/signUp';
 import MapDisplay from '../Map/Map';
 import CreatePin from '../Pins/Pins';
+import PinsByKnockers from '../Knocker_Pins/KnockerPins';
 
 
 
@@ -126,14 +127,14 @@ export default function Dashboard() {
       navigate('/Dashboard/area');
     } else if (componentName === 'pins') {
       navigate('/Dashboard/pins');
-    } else if (componentName === 'assignArea') {
-      navigate('/Dashboard/assignArea');
     }else if (componentName === 'signUp') {
       navigate('/Dashboard/signUp');
     }else if (componentName === 'map') {
       navigate('/Dashboard/map');
     }else if (componentName === 'createPin') {
       navigate('/Dashboard/createPin');
+    }else if (componentName === 'DroppedPins') {
+      navigate('/Dashboard/DroppedPins');
     }
     // setSelectedComponent(componentName);
 
@@ -183,7 +184,7 @@ export default function Dashboard() {
            </NavLink>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent" open={open} style={{zIndex:500}}>
        
          
           <Toolbar
@@ -208,7 +209,9 @@ export default function Dashboard() {
             <Divider sx={{ my: 1 }} />
             <FourthListItems handleSidebarItemClick={handleSidebarItemClick}/>
             <Divider sx={{my:1}}/>
-            <FifthListItems handleSidebarItemClick={handleSidebarItemClick}/>
+            {/* <FifthListItems handleSidebarItemClick={handleSidebarItemClick}/>
+            <Divider sx={{my:1}}/> */}
+            <SixthListItems handleSidebarItemClick={handleSidebarItemClick}/>
           </List>
         </Drawer>
         <Box
@@ -232,11 +235,13 @@ export default function Dashboard() {
                 {selectedComponent === 'pre-registration' && <PreRegisterationTable />}
                 {selectedComponent === 'area' && <AreaTable showAreaSelection={true} />}
                 {selectedComponent === 'pins' && <PinTable />}
-                {selectedComponent=== 'assignArea' && <AssignAreaToKnocker/>}
+                {/* {selectedComponent=== 'assignArea' && <AssignAreaToKnocker/>} */}
                 {/* {selectedComponent=== 'updateKnocker' &&<UserSignUp/>} */}
                 {selectedComponent=== 'createKnocker' && <UserSignUp/>}
                 {selectedComponent=== 'map' && <MapDisplay/>}
                 {selectedComponent=== 'createPin' && <CreatePin/>}
+                {selectedComponent=== 'DroppedPins' && <PinsByKnockers/>}
+
 
 
 

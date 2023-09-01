@@ -19,6 +19,8 @@ import { Button, Modal } from "@mui/material";
 import "./Table.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AssignAreaToKnocker from "../../AssignArea/AssignArea";
+
 
 
 export default function AreaTable() {
@@ -33,13 +35,18 @@ export default function AreaTable() {
   const [selectedAreaKnockers, setSelectedAreaKnockers] = useState([]);
   const [isKnockersModalOpen, setIsKnockersModalOpen] = useState(false);
   const [idCounter, setIdCounter] = React.useState(1);
+  const [isMapViewVisible, setIsMapViewVisible] = useState(false);
+  const [selectedAreaId, setSelectedAreaId] = useState(null);
+  const [isAssignAreaModalOpen, setIsAssignAreaModalOpen] = useState(false);
+  const [isAssignAreaToKnockersModalOpen, setIsAssignAreaToKnockersModalOpen] = useState(false);
+
 
   const location = useLocation();
   const req = "192.168.100.18";
 
   React.useEffect(() => {
     axios
-      .get("https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area", {
+      .get("http://192.168.100.18:3001/api/area", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -131,7 +138,10 @@ export default function AreaTable() {
       coordPair[1],
     ]);
     setSelectedCoordinates(coordinates);
+    setIsMapViewVisible(true);
     setArea(true);
+    setSelectedAreaId(row.id);
+    
     // console.log("coordinates", coordinates);
     // console.log("selectedCoordinates",selectedCoordinates);
     // navigate("/Dashboard/map");  //work on this
@@ -140,7 +150,7 @@ export default function AreaTable() {
   const handleViewKnockersClick = async (areaId) => {
     try {
       const response = await axios.get(
-        `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area/get/users?areaId=${areaId}`,
+        `http://192.168.100.18:3001/api/area/get/users?areaId=${areaId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -156,7 +166,7 @@ export default function AreaTable() {
         setIsKnockersModalOpen(true);
       } else {
         console.error("No area data found");
-        setSelectedAreaKnockers([]); // Set users or empty array
+        setSelectedAreaKnockers([]); 
         setIsKnockersModalOpen(true);
       }
       setIsKnockersModalOpen(true);
@@ -165,9 +175,63 @@ export default function AreaTable() {
     }
   };
 
+  const openAssignAreaModal = () => {
+    setIsAssignAreaModalOpen(true);
+  };
+  const openAssignAreaToKnockersModal = () => {
+    setIsAssignAreaToKnockersModalOpen(true);
+  };
+
+  const closeAssignAreaModal = () => {
+    setIsAssignAreaModalOpen(false);
+  };
+
+    const closeAssignAreaToKnockersModal = () => {
+    setIsAssignAreaToKnockersModalOpen(false);
+  };
+
   return (
     <div>
-      {area ? (
+       {isMapViewVisible ? ( 
+        
+        <div className="map-and-assign-area">
+
+          <div className="map-display">
+            <MapDisplay
+              selectedCoordinates={selectedCoordinates}
+            />
+          </div>
+          <div className="assign-area">
+
+            {/* <KnockersModal/> */}
+            <Button variant="contained" color="primary" onClick={openAssignAreaToKnockersModal}>
+                  Assign Area
+                </Button>
+                <br></br>
+            <KnockersModal
+                isOpen={true}
+                onClose={() => setIsAssignAreaModalOpen(false)}
+                selectedAreaKnockers={selectedAreaKnockers}
+                setSelectedAreaKnockers={setSelectedAreaKnockers}
+              />
+                    <Modal
+                    className="AssignAreaModal"
+        open={isAssignAreaToKnockersModalOpen}
+        onClose={closeAssignAreaToKnockersModal}
+        // Add any styling or properties needed for your modal
+      >
+        <div>
+          <AssignAreaToKnocker
+            isOpen={isAssignAreaToKnockersModalOpen}
+            onClose={closeAssignAreaToKnockersModal}
+          />
+        </div>
+      </Modal>
+
+          </div>
+        </div>
+      ) : (
+      area ? (
         <MapDisplay selectedCoordinates={selectedCoordinates} />
       ) : (
         <div>
@@ -206,7 +270,7 @@ export default function AreaTable() {
                     {columns.map((column) => (
                       <TableCell
                         key={column.id}
-                        align="left"
+                        align="center"
                         style={{
                           minWidth: column.minWidth,
                           color: "#1565c0",
@@ -222,12 +286,12 @@ export default function AreaTable() {
                     >
                       View
                     </TableCell>
-                    <TableCell
+                    {/* <TableCell
                       align="left"
                       style={{ color: "#1565c0", backgroundColor: "lightgray" }}
                     >
                       Knockers
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -277,7 +341,7 @@ export default function AreaTable() {
                             );
                             return (
                               <>
-                                <TableCell key={column.id} align="left">
+                                <TableCell key={column.id} align="center">
                                   {formattedDate}
                                 </TableCell>
                                 {/* <TableCell>
@@ -292,6 +356,7 @@ export default function AreaTable() {
                                   <RemoveRedEyeRoundedIcon
                                     onClick={() => {
                                       handleViewClick(row);
+                                      handleViewKnockersClick(row.id);
                                     }}
                                     style={{
                                       color: "#1565c0",
@@ -306,12 +371,12 @@ export default function AreaTable() {
                           }
 
                           return (
-                            <TableCell key={column.id} align="left">
+                            <TableCell key={column.id} align="center">
                               {value}
                             </TableCell>
                           );
                         })}
-                        <TableCell>
+                        {/* <TableCell>
                           <Button
                             variant="contained"
                             color="primary"
@@ -319,7 +384,7 @@ export default function AreaTable() {
                           >
                             Knockers
                           </Button>
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     ))}
                 </TableBody>
@@ -343,7 +408,7 @@ export default function AreaTable() {
             onClose={() => setIsKnockersModalOpen(false)}
           />
         </div>
-      )}
+      ))}
     </div>
   );
 }
@@ -440,19 +505,128 @@ export default function AreaTable() {
 //     </div>
 //   );
 // }
+// function KnockersModal({
+//   isOpen,
+//   onClose,
+//   selectedAreaKnockers,
+//   setSelectedAreaKnockers,
+// }) {
+  
+//   const token = localStorage.getItem("token");
+
+//   const handleDeleteKnocker = async (usersAreasId) => {
+//     try {
+//       const response = await axios.delete(
+//         `http://192.168.100.18:3001/api/area/assign?id=${usersAreasId}`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+
+//       setSelectedAreaKnockers((prevKnockers) =>
+//         prevKnockers.filter(
+//           (knocker) => knocker.users_areas.id !== usersAreasId
+//         )
+//       );
+//       toast.success('Area Unassigned to Knocker Successfully!', {
+//         position: 'top-right',
+//         autoClose: 3000,
+//         hideProgressBar: false,
+//         closeOnClick: true,
+//         pauseOnHover: true,
+//         draggable: true,
+//         progress: undefined,
+//       });
+//       console.log("Knocker deleted successfully:", response.data);
+//     } catch (error) {
+//       toast.error(`Error Deleting Knocker From This Area`, {
+//         position: 'top-right',
+//         autoClose: 5000,
+//         hideProgressBar: false,
+//         closeOnClick: true,
+//         pauseOnHover: true,
+//         draggable: true,
+//         progress: undefined,
+//       });
+//       console.error("Error deleting knocker:", error);
+//     }
+//   };
+
+//   if (!isOpen) {
+//     return null;
+//   }
+
+//   if (selectedAreaKnockers.length === 0) {
+//     return (
+//       <div className="modal-backdrop">
+//         <div className="modal-content">
+//           <div
+//             className="close"
+//             style={{ display: "flex", justifyContent: "end", padding: "0" }}
+//           >
+//             <Button variant="contained" color="primary" onClick={onClose}>
+//               X
+//             </Button>
+//           </div>
+//             <div style={{ textAlign: "center" }}>
+//             <h2 style={{ color: "#1565c0" }}>Knockers for Selected Area</h2>
+//             <p style={{ color: "#1565c0" }}>
+//               No Knockers Appointed to this Area
+//             </p>
+//           </div>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="modal-backdrop">
+//       <div className="modal-content2">
+//         <div
+//           className="close"
+//           style={{ display: "flex", justifyContent: "end", padding: "0" }}
+//         >
+//           <Button variant="contained" color="primary" onClick={onClose}>
+//             X
+//           </Button>
+//         </div>
+//         <h2 style={{ color: "#1565c0", textAlign: "center" }}>
+//           Knockers for Selected Area
+//         </h2>
+//         <div style={{ display: "flex", justifyContent: "center", alignItems:"center", overflow:"scroll" }}>
+//           {selectedAreaKnockers.map((knocker) => (
+//             <div key={knocker.id} className="knockerList">
+//               <div style={{  width: "50%",color: "#1565c0", marginLeft:"1rem"}}>
+//               User Name:  {knocker.userName}
+//               </div>
+//               <div style={{ width: "50%", color: "red", textAlign:"right" }}>
+//                 <DeleteIcon
+//                   style={{ width: "1.3rem", cursor: "pointer", marginRight:"1rem", alignSelf:"center" }}
+//                   onClick={() => handleDeleteKnocker(knocker.users_areas.id)}
+//                 />
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
 function KnockersModal({
   isOpen,
   onClose,
   selectedAreaKnockers,
   setSelectedAreaKnockers,
 }) {
-  
   const token = localStorage.getItem("token");
 
   const handleDeleteKnocker = async (usersAreasId) => {
     try {
       const response = await axios.delete(
-        `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area/assign?id=${usersAreasId}`,
+        `http://192.168.100.18:3001/api/area/assign?id=${usersAreasId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -465,8 +639,8 @@ function KnockersModal({
           (knocker) => knocker.users_areas.id !== usersAreasId
         )
       );
-      toast.success('Area Unassigned to Knocker Successfully!', {
-        position: 'top-right',
+      toast.success("Area Unassigned to Knocker Successfully!", {
+        position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -476,8 +650,8 @@ function KnockersModal({
       });
       console.log("Knocker deleted successfully:", response.data);
     } catch (error) {
-      toast.error(`Error Deleting Knocker From This Area`, {
-        position: 'top-right',
+      toast.error("Error Deleting Knocker From This Area", {
+        position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -493,59 +667,59 @@ function KnockersModal({
     return null;
   }
 
-  if (selectedAreaKnockers.length === 0) {
-    return (
-      <div className="modal-backdrop">
-        <div className="modal-content">
-          <div
-            className="close"
-            style={{ display: "flex", justifyContent: "end", padding: "0" }}
-          >
-            <Button variant="contained" color="primary" onClick={onClose}>
-              X
-            </Button>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <h2 style={{ color: "#1565c0" }}>Knockers for Selected Area</h2>
-            <p style={{ color: "#1565c0" }}>
-              No Knockers Appointed to this Area
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content2">
-        <div
-          className="close"
+    <div >
+      <div>
+        {/* <div
+          
           style={{ display: "flex", justifyContent: "end", padding: "0" }}
         >
           <Button variant="contained" color="primary" onClick={onClose}>
             X
           </Button>
-        </div>
+        </div> */}
         <h2 style={{ color: "#1565c0", textAlign: "center" }}>
           Knockers for Selected Area
         </h2>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          {selectedAreaKnockers.map((knocker) => (
-            <div key={knocker.id} className="knockerList">
-              <div style={{ width: "50%", color: "#1565c0" }}>
-              Name:  {knocker.userName}
-              </div>
-              <div style={{ width: "50%", color: "#1565c0" }}>
-                <DeleteIcon
-                  style={{ width: "1.3rem", cursor: "pointer" }}
-                  onClick={() => handleDeleteKnocker(knocker.users_areas.id)}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        {selectedAreaKnockers.length === 0 ? (
+          <div style={{ textAlign: "center" }}>
+            <p style={{ color: "#1565c0" }}>
+              No Knockers Appointed to this Area
+            </p>
+          </div>
+        ) : (
+          <table style={{ width: "100%" }}>
+            <thead>
+              <tr>
+                <th style={{ width: "50%", color: "#1565c0",  textAlign: "left"}}>User Name</th>
+                <th style={{ width: "50%", color: "red", textAlign: "right" }}>
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedAreaKnockers.map((knocker) => (
+                <tr key={knocker.id}>
+                  <td style={{ width: "50%", color: "#1565c0" }}>
+                    {knocker.userName}
+                  </td>
+                  <td style={{ width: "50%", color: "red", textAlign: "right" }}>
+                    <DeleteIcon
+                      style={{
+                        width: "1.3rem",
+                        cursor: "pointer",
+                        marginRight: "1rem",
+                      }}
+                      onClick={() => handleDeleteKnocker(knocker.users_areas.id)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
 }
+

@@ -41,7 +41,7 @@ const handleEditIconClick = (pinData) => {
   React.useEffect(() => {
 const req= "192.168.100.18"
     
-    axios.get(`https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/pin`, {
+    axios.get(`http://192.168.100.18:3001/api/pin`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -118,7 +118,7 @@ const req= "192.168.100.18"
   const handleDeleteIconClick = async (pinData) => {
     try {
       const response = await axios.delete(
-        `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/pin?id=${pinData.id}`,
+        `http://192.168.100.18:3001/api/pin?id=${pinData.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -244,7 +244,14 @@ const req= "192.168.100.18"
                         return (
                             
                           <TableCell key={column.id} align="left">
-                            {value}
+                             {value.startsWith('http://') || value.startsWith('https://') ? (
+      // If it's an image URL, render an <img> element
+      <img src={value} alt="Image" style={{ maxWidth: '100%', maxHeight: '5rem', width:"15%" }} />
+    ) : (
+      // If it's not an image URL, display the value as text
+      value
+    )}
+                            {console.log(value)}
                           </TableCell>
                         );
                       })}

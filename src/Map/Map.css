@@ -11,21 +11,42 @@
   }
   
   .dropdown {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    /* align-self: center; */
     /* border: 1px solid red; */
-    width: 100%;
+    width: 50%;
     /* flex: 1; */
-    padding: 20px;
+    /* padding: 20px; */
     /* border: 1px solid red; */
-    margin-bottom: 2rem;
+    margin-top: 2rem;
     text-align: center;
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+    min-height: 50%;
   }
   .inner-dropdownDiv{
-    /* border:1px solid green */
+    /* border:1px solid green; */
+    width: 100%;
+  }
+
+  .closeBtn{
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    background-color: white;
+    min-height: 50vh;
+
+
   }
   
   .map {
 /* border: 1px solid green; */
-    width: 80%;
+    width: 100%;
+    
     /* flex: 2; */
   }
 

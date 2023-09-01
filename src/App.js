@@ -15,27 +15,32 @@ import UserSignUp from "./Auth/User/Signup/signUp";
 import PinTable from "./DashBoard/Table/PinTable";
 import CreatePin from "./Pins/Pins";
 import AssignAreaToKnocker from "./AssignArea/AssignArea";
+import AuthMiddleware from "./Middleware/Auth";
 
 function App() {
   return (
+    // <div className="App">
+    //   <AuthMiddleware>
+    //   <Routes>
+    //   <Route path="/Dashboard" element={<Dashboard/>}/>
+    //   <Route path="/Dashboard/:selectedComponent" element={<Dashboard />} />
+    //   <Route path="/" element={<UserSignIn />}></Route>
+    //   </Routes>
+     
+    //   <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+    //   </AuthMiddleware>
+    // </div>
     <div className="App">
-      <Routes>
-        <Route path="/Dashboard" element={<Dashboard/>}/>
-      <Route path="/Dashboard/:selectedComponent" element={<Dashboard />} />
-        {/* <Route path="/Dashboard" element={<Dashboard />}>
-          <Route path="map" element={<MapDisplay key="map" />} />
-          <Route path="area" element={<AreaTable key="area" />} />
-          <Route path="createKnocker" element={<UserSignUp key="createKnocker"/>}/>
-          <Route path="knockersList" element={<StickyHeadTable key="knockersList"/>}/>
-          <Route path="preRegistration" element={<PreRegisterationTable key="preRegistration"/>}/>
-          <Route path="assignArea" element={<AssignAreaToKnocker key="assignArea"/>}/>
-          <Route path="pinsList" element={<PinTable key="pinsList"/>}/>
-          <Route path="createPin" element={<CreatePin key="createPin"/>}/>
-        </Route> */}
-        <Route path="/" element={<UserSignIn />}></Route>
-      </Routes>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      
+        <AuthMiddleware /> {/* Place AuthMiddleware outside the Routes */}
+        <Routes>
+          <Route path="/Dashboard" element={<Dashboard />}/>
+          <Route path="/Dashboard/:selectedComponent" element={<Dashboard />} />
+          <Route path="/" element={<UserSignIn />}></Route>
+        </Routes>
+     
 
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 }

@@ -55,7 +55,7 @@ width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Make sure it's above other content */
+    z-index: 1000; 
   }
   
   /* Style for the modal content */
@@ -70,13 +70,52 @@ width: 100%;
     padding: 50px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow: hidden;
+    height: 40vh;
+    
   }
   
 
   .knockerList{
-    width: 100%;
+    width: 50%;
     display: flex;
     /* justify-content: right ; */
-    text-align: center;
+    text-align: left;
+    align-items: center;
+    background-color: rgb(242, 242, 242);
+    border-radius: 5%;
+    margin: 1rem
     
+  }
+
+  .map-and-assign-area{
+    display: flex;
+    width: 100%;
+    /* border: 2px solid red; */
+  }
+
+  .map-display{
+    /* border: 2px solid green; */
+    width:70%;
+    margin-right: 5%;
+    text-align: center;
+  }
+
+  .assign-area{
+    /* border: 1px solid blue; */
+    width:25%
+  }
+
+  .AssignAreaModal{
+    width: 100%;
+    
+    border: 1px solid red;
+    position: relative;
+    top:50%;
+    left: 50%;
+  }
+
+  .AssignAreaInner{
+    background-color: white;
   }
