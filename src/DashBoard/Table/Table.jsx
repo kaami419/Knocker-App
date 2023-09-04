@@ -49,7 +49,7 @@ export default function StickyHeadTable() {
   React.useEffect(() => {
     const req = "192.168.100.18"
 
-    axios.get('http://192.168.100.18:3001/api/knocker/all', {
+    axios.get('http://34.122.133.247:3001/api/knocker/all', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -158,7 +158,7 @@ export default function StickyHeadTable() {
     setIsModalOpen(true);
 
     try {
-      const response = await axios.get(`http://192.168.100.18:3001/api/area/get/users?knockerId=${user.id}`, {
+      const response = await axios.get(`http://34.122.133.247:3001/api/area/get/users?knockerId=${user.id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -272,7 +272,7 @@ export default function StickyHeadTable() {
                               setKnocker(!knocker);
                               setEditingPin(editingPin)
                               // navigate('/Dashboard/updateKnocker')
-                            }}          >
+                            }}>
                           </EditIcon>
                         </TableCell>
                         <TableCell>

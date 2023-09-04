@@ -6,7 +6,7 @@
   import Select from 'react-select';
 
 
-  export default function AssignAreaToKnocker(isOpen, onClose) {
+  export default function AssignAreaToKnocker({isOpen, onClose, selectedAreaName, selectedAreaId}) {
     const [areas, setAreas] = useState([]);
     const [knockers, setKnockers] = useState([]);
     const [selectedArea, setSelectedArea] = useState('');
@@ -15,10 +15,11 @@
 
     const live= "https://arbitrary-lxvlpwp3rq-uc.a.run.app"
     const local= "http://192.168.100.18:3001"
+    const myLocal= "http://localhost:3001"
 
 
     useEffect(() => {
-      axios.get(`${local}/api/area`,{
+      axios.get(`http://34.122.133.247:3001/api/area`,{
           headers: {
             Authorization: `Bearer ${token}` 
           }
@@ -30,7 +31,7 @@
           console.error('Error fetching areas:', error);
         });
 
-      axios.get('http://192.168.100.18:3001/api/knocker/all',{
+      axios.get('http://34.122.133.247:3001/api/knocker/all',{
           headers: {
             Authorization: `Bearer ${token}` 
           }
@@ -43,18 +44,24 @@
         });
     }, []);
 
-    const handleAreaChange = (event) => {
-      setSelectedArea(event.target.value);
-    };
+    // const handleAreaChange = (event) => {
+    //   setSelectedArea(event.target.value);
+    // };
 
-    const handleKnockerChange = (event) => {
-      setSelectedKnocker(event.target.value);
-    };
+    // const handleKnockerChange = (event) => {
+    //   setSelectedKnocker(event.target.value);
+    // };
 
     const assignAreaToKnocker = async () => {
       try {
-        await axios.post('http://192.168.100.18:3001/api/area/assign', {
-          areaId: selectedArea,
+        const selectedAreaId = areas.find((area) => area.name === selectedAreaName)?.id;
+
+        if (!selectedAreaId) {
+          console.error('Area not found for selected name:', selectedAreaName);
+          return;
+        }
+        await axios.post('http://34.122.133.247:3001/api/area/assign', {
+          areaId: selectedAreaId,
           knockerId: selectedKnocker
         },{
           headers: {
@@ -63,7 +70,7 @@
         });
 
       
-        axios.get('http://192.168.100.18:3001/api/area',{
+        axios.get('http://34.122.133.247:3001/api/area',{
           headers: {
             Authorization: `Bearer ${token}` 
           }
@@ -75,7 +82,7 @@
             console.error('Error fetching areas:', error);
           });
 
-        axios.get('http://192.168.100.18:3001/api/knocker/all',{
+        axios.get('http://34.122.133.247:3001/api/knocker/all',{
           headers: {
             Authorization: `Bearer ${token}` 
           }
@@ -96,36 +103,44 @@
         
       }
     };
+    useEffect(()=>{
+      
+      console.log("selected area name", selectedAreaName)
+    },[selectedAreaName])
 
     return (
       <div className='container'>
       
 
       <div className='AssignAreaDiv'>
-        <div style={{textAlign:"right"}}>
-        <Button variant='contained' color="primary">X</Button>
-        </div>
+        {/* <div style={{textAlign:"right"}}>
+        <Button variant='contained' color="primary" >X</Button>
+        </div> */}
         <h2 className='heading'>Assign Area to Knocker</h2>
         <div className='SubDiv'>
-          {/* {areas.length > 0 && (
-            // <select className='select' style={{marginRight:"1rem", padding:"1rem 2.5rem"}} value={selectedArea}  onChange={handleAreaChange}>
-            //   <option value="">Select an Area</option>
-            //   {areas.map((area) => (
-            //     <option key={area.id} value={area.id}>
-            //       {area.name}
-            //     </option>
-            //   ))}
-            // </select>
-            <Select
+          {areas.length > 0 && (
+          //   <select className='select' style={{marginRight:"1rem", padding:"1rem 2.5rem"}} value={selectedArea}  onChange={handleAreaChange}>
+          //     <option value="">Select an Area</option>
+          //     {areas.map((area) => (
+          //       <option key={area.id} value={area.id}>
+          //         {area.name}
+          //       </option>
+          //     ))}
+          //   </select>
+          //   <Select
             
-            // className='select'
-            styles={{ marginRight: "1rem", padding: "1rem 2.5rem", marginBottom:"3rem",    minWidth: "30%" }}
-            onChange={(selectedOption) => setSelectedArea(selectedOption.value)}
-            value={areas.find((area) => area.id === selectedArea)}
-            options={areas.map((area) => ({ value: area.id, label: area.name }))}
-            placeholder="Select an Area"  
-          />
-          )} */}
+          //   // className='select'
+          //   styles={{ marginRight: "1rem", padding: "1rem 2.5rem", marginBottom:"3rem",    minWidth: "30%" }}
+          //   onChange={(selectedOption) => setSelectedArea(selectedOption.value)}
+          //   value={areas.find((area) => area.id === selectedArea)}
+          //   options={areas.map((area) => ({ value: area.id, label: area.name }))}
+          //   placeholder="Select an Area"  
+          // />
+          <p style={{ color: "#1565c0", textAlign: "center" }}>
+          Selected Area: {selectedAreaName}
+          
+        </p>
+          )}
           {knockers.length > 0 && (
             // <select className='select' style={{marginLeft:"1rem", padding:"1rem 2.3rem"}} value={selectedKnocker} onChange={handleKnockerChange}>
             //   <option value="">Select a Knocker</option>
@@ -138,7 +153,7 @@
             <Select
       // className='select'
       styles={{ 
-        minWidth: "30%", // Set minimum width
+        minWidth: "30%", 
         width:"30%",
         marginRight: "1rem", padding: "1rem 2.3rem", marginTop:"3rem",
         menu: (provided) => ({

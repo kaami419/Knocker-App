@@ -19,6 +19,7 @@ import PinTable from '../DashBoard/Table/PinTable';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
+import { ChromePicker } from 'react-color';
 
 
 
@@ -27,12 +28,16 @@ import { CircularProgress } from '@mui/material';
 const defaultTheme = createTheme({});
 
 export default function CreatePin({selectedPin, editingPin}) {
+  const [selectedColor, setSelectedColor] = React.useState(''); 
+
     const [pin, setPin]= React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showColorPicker, setShowColorPicker] = React.useState(false);
 
     const [pinData, setPinData] = React.useState({
         name: '',
         image: '',
+        color: selectedColor,
       });
     const token = localStorage.getItem('token');
 
@@ -52,11 +57,12 @@ export default function CreatePin({selectedPin, editingPin}) {
         const pinData = {
           name: data.get('name'), 
           image: data.get('image'), 
+          color: selectedColor,
         };
 setIsLoading(true);
       
         try {
-          const response = await axios.post('http://192.168.100.18:3001/api/pin', pinData,{
+          const response = await axios.post('http://34.122.133.247:3001/api/pin', pinData,{
             headers: {
               Authorization: `Bearer ${token}` 
             }
@@ -92,10 +98,11 @@ setIsLoading(true);
       const handleUpdate = async () => {
         try {
           const response = await axios.put(
-            `http://192.168.100.18:3001/api/pin?id=${selectedPin.id}`,
+            `http://34.122.133.247:3001/api/pin?id=${selectedPin.id}`,
             {
               name: pinData.name,
               image: pinData.image,
+              color: selectedColor
             },
             {
               headers: {
@@ -135,6 +142,14 @@ setIsLoading(true);
           ...prevData,
           [name]: value,
         }));
+      };
+
+      const handleColorChange = (color) => {
+        setSelectedColor(color.hex);
+      };
+
+      const handleColorButtonClick = () => {
+        setShowColorPicker(!showColorPicker);
       };
 
       const navigate=useNavigate()
@@ -179,6 +194,7 @@ setIsLoading(true);
             />
             <TextField
             //   margin="normal"
+            style={{marginBottom:"2rem"}}
               required
               fullWidth
               id="Image"
@@ -189,6 +205,23 @@ setIsLoading(true);
             //   autoComplete="current-Image"
             //   autoFocus
             />
+
+<div>
+          
+          <Button
+          style={{paddingRight:"1rem"}}
+            variant="contained"
+            onClick={handleColorButtonClick} // Toggle color picker visibility on button click
+          >
+            Select Color 
+          </Button>
+          {showColorPicker && (
+            <ChromePicker color={selectedColor} onChange={handleColorChange} />
+          )}
+          
+        </div>
+            {/* <ChromePicker color={selectedColor} onChange={handleColorChange} /> */}
+
              {isLoading ? (
                   <Button 
                   halfwidth="true"

@@ -97,7 +97,7 @@ const req= "192.168.100.18"
 setIsLoading(true); 
         try {
           const response = await axios.post(
-            'http://192.168.100.18:3001/api/auth/signIn',
+            'http://34.122.133.247:3001/api/auth/signIn',
             formData,
             {
               auth: {

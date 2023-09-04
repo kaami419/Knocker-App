@@ -150,7 +150,7 @@ const req= "192.168.100.18"
 setIsLoading(true);
   
     try {
-      const response = await axios.post('http://192.168.100.18:3001/api/admin/create/user', formData,{
+      const response = await axios.post('http://34.122.133.247:3001/api/admin/create/user', formData,{
         headers: {
           Authorization: `Bearer ${token}` 
         }
@@ -227,7 +227,7 @@ setIsLoading(true);
 
     try {
       const response = await axios.put(
-        `http://192.168.100.18:3001/api/knocker?id=${selectedUser.id}`,{
+        `http://34.122.133.247:3001/api/knocker?id=${selectedUser.id}`,{
         updatedUserData},{
           headers:{
             Authorization: `Bearer ${token}`,
@@ -235,7 +235,7 @@ setIsLoading(true);
           }
         }
       );
-
+      
       toast.success('Knocker updated successfully!', {
         position: 'top-right',
         autoClose: 3000,
@@ -247,6 +247,7 @@ setIsLoading(true);
       });
       setTable(!table)
 
+      
       // navigate('/Dashboard/knockersList')
     } catch (error) {
       // setErrorMessage(error.response.data.message); 

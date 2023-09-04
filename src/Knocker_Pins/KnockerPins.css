@@ -6,10 +6,18 @@
     
 }
 
-.input{
+/* .input{
      color:"#1565c0";
      padding: .5rem 3rem;
      border-style: none;
      border-radius: .5rem;
      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} */
+
+.modalMainDiv{
+    width: 50%;
+    /* display: flex; */
+    /* justify-content: center; */
+    border: 5px solid red;
+    
 }

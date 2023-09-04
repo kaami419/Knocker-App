@@ -7,11 +7,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from '@mui/material/TableHead';
 import TableRow from "@mui/material/TableRow";
 import Paper from '@mui/material/Paper';
-import { TablePagination } from "@mui/material";
+import { Input, TablePagination } from "@mui/material";
 // import SearchBar from "material-ui-search-bar";
 // import { Search } from "@mui/icons-material";
 import "./KnockerPins.css"
 import axios from "axios";
+import RemoveRedEyeRoundedIcon from "@mui/icons-material/RemoveRedEyeRounded";
+import MapDisplay from "../Map/Map";
+import { Modal } from '@mui/material';
+import format from 'date-fns/format'
 
 
 
@@ -21,22 +25,19 @@ import axios from "axios";
 //   }
 // });
 
-const originalRows = [
-  { name: "Pizza", calories: 200, fat: 6.0, carbs: 24, protein: 4.0 },
-  { name: "Hot Dog", calories: 300, fat: 6.0, carbs: 24, protein: 4.0 },
-  { name: "Burger", calories: 400, fat: 6.0, carbs: 24, protein: 4.0 },
-  { name: "Hamburger", calories: 500, fat: 6.0, carbs: 24, protein: 4.0 },
-  { name: "Fries", calories: 600, fat: 6.0, carbs: 24, protein: 4.0 },
-  { name: "Ice Cream", calories: 700, fat: 6.0, carbs: 24, protein: 4.0 }
-];
+
 
 export default function PinsByKnockers() {
   const token = localStorage.getItem('token');
 
+  const [selectedPin, setSelectedPin] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
-  const [searched, setSearched] = useState("");
+  const [searched, setSearched] = useState(""); 
+  const [pinImageUrl, setPinImageUrl] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [pagination, setPagination] = useState({
     total: 0,
     limit: 10,
@@ -46,8 +47,15 @@ export default function PinsByKnockers() {
 
   useEffect(() => {
     const offset = page * rowsPerPage;
+    let apiUrl = `http://34.122.133.247:3001/api/pin/drop?page=${page}&limit=${rowsPerPage}`;
+
+    // Append the selected date to the API URL if it exists
+    if (selectedDate) {
+      apiUrl += `&date=${selectedDate}`;
+    }
   
-    axios.get(`http://192.168.100.18:3001/api/pin/drop?page=${page}&limit=${rowsPerPage}`, {
+  
+    axios.get(apiUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -55,13 +63,14 @@ export default function PinsByKnockers() {
       .then(response => {
         const apiData = response.data.data;
         setRows(apiData);
+        // console.log("apiData", apiData[0].pin.image);
         const total = response.data.total;
         setPagination(prevPagination => ({ ...prevPagination, total }));
       })
       .catch(error => {
         console.error("Error fetching data:", error);
       });
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, selectedDate]);
   
 
 
@@ -77,31 +86,86 @@ export default function PinsByKnockers() {
     setPage(0);
   };
 
+  const handlePinDetailsClick = (selectedPinData) => {
+    setSelectedPin(selectedPinData);
+    setIsModalOpen(true);
+    const pinImageUrl = selectedPinData.pin.image; 
+
+    setPinImageUrl(pinImageUrl);
+  };
+
+  
+
+// const requestSearch = (searchedVal) => {
+//   console.log("rows", rows);
+//   const filteredRows = rows.filter((row) => {
+//     const pinLat = row.pinLat.toString();
+//     const pinLong = row.pinLong.toString();
+//     searchedVal = searchedVal.toString().toLowerCase(); 
+
+//     return (
+//       pinLat.toLowerCase().includes(searchedVal) ||
+//       pinLong.toLowerCase().includes(searchedVal)
+//     );
+//   });
+//   console.log("filtered", filteredRows);
+//   setRows(filteredRows);
+//   console.log("filtered rows", filteredRows);
+// };
+
 const requestSearch = (searchedVal) => {
+  console.log("Rows data:", rows);
+  // console.log("Searched Value:", searchedVal);
+
   const filteredRows = rows.filter((row) => {
-    return row.pinLat.toLowerCase().includes(searchedVal.toLowerCase()) ||
-           row.pinLong.toLowerCase().includes(searchedVal.toLowerCase());
+    const userName = row.user.userName;
+    const pinName = row.pin.name;
+    searchedVal = searchedVal.toString().toLowerCase();
+
+    console.log("userName:", userName);
+    console.log("pinName:", pinName);
+
+    const match =
+      userName.toLowerCase().includes(searchedVal) ||
+      pinName.toLowerCase().includes(searchedVal);
+
+    // console.log("Row:", row);
+    console.log("Match:", match);
+
+    return match;
   });
+
+  console.log("filtered", filteredRows);
   setRows(filteredRows);
+  console.log("filtered rows", filteredRows);
 };
+
+
 
   const cancelSearch = () => {
     setSearched("");
     requestSearch(searched);
   };
 
+    useEffect(() => {
+    console.log("pinImageUrl:", pinImageUrl);
+    // console.log("pinLat:", pinLat);
+    // console.log("pinLong:", pinLong);
+  }, [pinImageUrl]);
+
   return (
     <>
     <div className="searchDiv">
       <div style={{width:"50%"}}>
     <span style={{  color:"#1565c0"}} ><b>Search Knockers:</b> </span> 
-    <input 
+    <Input
+           
           onChange={(searchVal) => requestSearch(searchVal)}
           onCancelSearch={() => cancelSearch()} 
           type="search" className="input"/>
     </div>
     <div style={{width:"50%", textAlign:"right"}}>
-    <span style={{ color:"#1565c0"}}><b>Date:</b> </span> <input type="Date"  className="input"/>
+    <span style={{ color:"#1565c0"}}><b>Date:</b> </span> <Input style={{color:"#1565c0"}} type="Date"  className="input"  onChange={(e) => setSelectedDate(e.target.value)}/>
     </div>
     </div>
       <Paper>
@@ -115,10 +179,10 @@ const requestSearch = (searchedVal) => {
             <TableHead style={{backgroundColor:"lightgray"}}>
               <TableRow>
                 <TableCell align="left" style={{color:"#1565c0"}}>Id</TableCell>
-                <TableCell align="left" style={{color:"#1565c0"}}>Knockers</TableCell>
-                <TableCell align="left" style={{color:"#1565c0"}}>Pin&nbsp;Dropped</TableCell>
-                <TableCell align="left" style={{color:"#1565c0"}}>Created At</TableCell>
-                <TableCell align="left" style={{color:"#1565c0"}}>View on Map</TableCell>
+                <TableCell align="center" style={{color:"#1565c0"}}>Knockers</TableCell>
+                <TableCell align="center" style={{color:"#1565c0"}}>Pin&nbsp;Dropped</TableCell>
+                <TableCell align="center" style={{color:"#1565c0"}}>Created At</TableCell>
+                <TableCell align="left" style={{color:"#1565c0"}}>View  </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -127,10 +191,10 @@ const requestSearch = (searchedVal) => {
                   <TableCell style={{color:"#1565c0"}} component="th" scope="row">
                   {row.id}
                   </TableCell>
-                  <TableCell align="left" >{row.user.userName}</TableCell>
-                  <TableCell align="left">{row.pin.name}</TableCell>
-                  <TableCell align="left">{row.createdAt}</TableCell>
-                  {/* <TableCell align="left">{row.protein}</TableCell> */}
+                  <TableCell align="center" >{row.user.userName}</TableCell>
+                  <TableCell align="center">{row.pin.name}</TableCell>
+                  <TableCell align="center">   {format(new Date(row.createdAt), 'yyyy-MM-dd')}</TableCell>
+                  <TableCell align="left">{<RemoveRedEyeRoundedIcon style={{color:"#1565c0", cursor:"pointer"}}  onClick={() => handlePinDetailsClick(row)}/>}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -147,6 +211,39 @@ const requestSearch = (searchedVal) => {
   onRowsPerPageChange={handleChangeRowsPerPage}
 />
       </Paper>
+    
+      <Modal
+
+  open={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+>
+  <div className="modal-content" style={{position:'absolute', top:"2.5%", left:"13%"}}>
+    {selectedPin && (
+      <>
+      
+        {/* <h2>Pin Details</h2>
+        <div>
+          <strong>Latitude:</strong> {selectedPin.pinLat}
+        </div>
+        <div>
+          <strong>Longitude:</strong> {selectedPin.pinLong}
+        </div> */}
+        {/* <div>
+          <strong>Image</strong> <img src={pinImageUrl}></img>
+        </div> */}
+        {/* Add the MapDisplay component here with pin image based on pinImageUrl */}
+        <MapDisplay
+          pinLat={selectedPin.pinLat}
+          pinLong={selectedPin.pinLong}
+          pinImageUrl={pinImageUrl}
+        />
+      </>
+    )}
+  </div>
+</Modal>
+
+
+
 
     </>
   );

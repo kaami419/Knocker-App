@@ -39,6 +39,10 @@ export default function AreaTable() {
   const [selectedAreaId, setSelectedAreaId] = useState(null);
   const [isAssignAreaModalOpen, setIsAssignAreaModalOpen] = useState(false);
   const [isAssignAreaToKnockersModalOpen, setIsAssignAreaToKnockersModalOpen] = useState(false);
+  const [selectedAreaName, setSelectedAreaName] = useState(""); 
+  // const [selectedAreaNameId, setSelectedAreaNameId] = useState(""); 
+
+
 
 
   const location = useLocation();
@@ -46,7 +50,7 @@ export default function AreaTable() {
 
   React.useEffect(() => {
     axios
-      .get("http://192.168.100.18:3001/api/area", {
+      .get("http://34.122.133.247:3001/api/area", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -137,10 +141,13 @@ export default function AreaTable() {
       coordPair[0],
       coordPair[1],
     ]);
+    // console.log("row", row.name);
     setSelectedCoordinates(coordinates);
+    setSelectedAreaName(row.name);
     setIsMapViewVisible(true);
     setArea(true);
     setSelectedAreaId(row.id);
+    console.log("row name",selectedAreaId);
     
     // console.log("coordinates", coordinates);
     // console.log("selectedCoordinates",selectedCoordinates);
@@ -150,7 +157,7 @@ export default function AreaTable() {
   const handleViewKnockersClick = async (areaId) => {
     try {
       const response = await axios.get(
-        `http://192.168.100.18:3001/api/area/get/users?areaId=${areaId}`,
+        `http://34.122.133.247:3001/api/area/get/users?areaId=${areaId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -214,16 +221,20 @@ export default function AreaTable() {
                 selectedAreaKnockers={selectedAreaKnockers}
                 setSelectedAreaKnockers={setSelectedAreaKnockers}
               />
-                    <Modal
+                      <Modal
                     className="AssignAreaModal"
         open={isAssignAreaToKnockersModalOpen}
         onClose={closeAssignAreaToKnockersModal}
-        // Add any styling or properties needed for your modal
+        selectedAreaName={selectedAreaName}
+        
       >
-        <div>
+        <div className="AssignAreaInner">
           <AssignAreaToKnocker
             isOpen={isAssignAreaToKnockersModalOpen}
             onClose={closeAssignAreaToKnockersModal}
+            selectedAreaName={selectedAreaName}
+            selectedAreaId={selectedAreaId}
+            
           />
         </div>
       </Modal>
@@ -626,7 +637,7 @@ function KnockersModal({
   const handleDeleteKnocker = async (usersAreasId) => {
     try {
       const response = await axios.delete(
-        `http://192.168.100.18:3001/api/area/assign?id=${usersAreasId}`,
+        `http://34.122.133.247:3001/api/area/assign?id=${usersAreasId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

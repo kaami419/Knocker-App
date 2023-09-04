@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 // import Modal from 'react-modal';
 // import 'react-modal/styles.css' ;
 import {Modal} from "@mui/material";
+import { OverlayView } from "@react-google-maps/api";
 
 
 
@@ -24,7 +25,7 @@ const req= "192.168.100.18"
 const saveShapeData = async (name, coordinates) => {
   try {
     const path = coordinates.map((coord) => [coord.lat, coord.lng]);
-    const response = await axios.post('http://192.168.100.18:3001/api/area', {
+    const response = await axios.post('http://34.122.133.247:3001/api/area', {
       name,
       path,
     },
@@ -39,7 +40,7 @@ const saveShapeData = async (name, coordinates) => {
   }
 };
 
-export default function MapDisplay({selectedCoordinates, showAreaSelection}) {
+export default function MapDisplay({selectedCoordinates, showAreaSelection, pinImageUrl, pinLat, pinLong}) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyD6iiqGUi60qosic-Yl6DOsK2cin2sNX_o",
     libraries
@@ -239,6 +240,9 @@ color: "#1565c0",
           shapes={shapes}
           selectedShapeIndex={selectedShapeIndex}
           isLoaded={isLoaded}
+          pinImageUrl={pinImageUrl} 
+          pinLat={pinLat}            
+          pinLong={pinLong}     
           
         />
       </div>
@@ -250,9 +254,22 @@ color: "#1565c0",
     </div>)
 }
 
-function Map({ drawingMode, setDrawingMode, onPolygonComplete, shapes ,selectedShapeIndex,isLoaded}) {
-  const center = useMemo(() => ({ lat: 31.582045, lng: 74.329376 }), []);
+function Map({ drawingMode, setDrawingMode, onPolygonComplete, shapes ,selectedShapeIndex,isLoaded, pinLat, pinLong, pinImageUrl}) {
+  // const center = useMemo(() => ({ lat: 31.582045, lng: 74.329376 }), []);
+  const pinLatNumber = parseFloat(pinLat);
+  const pinLongNumber = parseFloat(pinLong);
+
+  const center = useMemo(() => {
+    if (!isNaN(pinLatNumber) && !isNaN(pinLongNumber)) {
+      return { lat: pinLatNumber, lng: pinLongNumber };
+    } else {
+      return { lat: 31.582045, lng: 74.329376 }; // Default center if pinLat and pinLong are not provided or invalid
+    }
+  }, [pinLatNumber, pinLongNumber]);
+
   const [map,setMap] = useState();
+
+
 
   // useEffect(()=>{console.log("shapes",shapes);},[shapes])
 
@@ -265,6 +282,12 @@ function Map({ drawingMode, setDrawingMode, onPolygonComplete, shapes ,selectedS
     },
     map
   };
+  // useEffect(() => {
+  //   console.log("pinImageUrl:", pinImageUrl);
+  //   console.log("pinLat:", pinLat);
+  //   console.log("pinLong:", pinLong);
+  // }, [pinImageUrl, pinLat, pinLong]);
+
 
   return (
     <GoogleMap zoom={12} center={center} mapContainerClassName="map-container" onLoad={(map)=>{setMap(map)}}>
@@ -290,6 +313,23 @@ function Map({ drawingMode, setDrawingMode, onPolygonComplete, shapes ,selectedS
         />
 
       )})}
+       {pinLat && pinLong && (
+        <OverlayView
+        position={{ lat: pinLat, lng: pinLong }}
+        mapPaneName={OverlayView.OVERLAY_LAYER}
+      >
+        <img
+          src={pinImageUrl}
+          alt="Pin Image"
+          style={{
+            width: "1.5rem", 
+            height: "1.5rem",
+          }}
+        />
+      </OverlayView>
+        
+      )}
+      
       {/* {console.log("shape here", shapes)} */}
     </GoogleMap>
   );

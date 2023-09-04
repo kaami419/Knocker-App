@@ -23,7 +23,7 @@ export default function PreRegisterationTable() {
   React.useEffect(() => {
 const req= "192.168.100.18"
     
-    axios.get('http://192.168.100.18:3001/api/knocker/pre/registration', {
+    axios.get('http://34.122.133.247:3001/api/knocker/pre/registration', {
       headers: {
         Authorization: `Bearer ${token}`
       }

@@ -66,19 +66,19 @@ export const FourthListItems = ({handleSidebarItemClick}) => (
   </React.Fragment>
 );
 
-export const FifthListItems = ({handleSidebarItemClick}) => (
-  <React.Fragment>
-    <ListSubheader component="div" inset style={{  color: '#1565c0' }}>
-      Area Assigning
-    </ListSubheader>
-    <ListItemButton onClick={() => handleSidebarItemClick('assignArea')}>
-      <ListItemIcon>
-        <PersonPinCircleOutlinedIcon style={{  color: '#1565c0' }}/>
-      </ListItemIcon>
-      <ListItemText primary="Assign" />
-    </ListItemButton>
-  </React.Fragment>
-);
+// export const FifthListItems = ({handleSidebarItemClick}) => (
+//   <React.Fragment>
+//     <ListSubheader component="div" inset style={{  color: '#1565c0' }}>
+//       Area Assigning
+//     </ListSubheader>
+//     <ListItemButton onClick={() => handleSidebarItemClick('assignArea')}>
+//       <ListItemIcon>
+//         <PersonPinCircleOutlinedIcon style={{  color: '#1565c0' }}/>
+//       </ListItemIcon>
+//       <ListItemText primary="Assign" />
+//     </ListItemButton>
+//   </React.Fragment>
+// );
 
 export const SixthListItems = ({handleSidebarItemClick}) => (
   <React.Fragment>
