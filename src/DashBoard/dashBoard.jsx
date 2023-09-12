@@ -31,6 +31,7 @@ import UserSignUp from '../Auth/User/Signup/signUp';
 import MapDisplay from '../Map/Map';
 import CreatePin from '../Pins/Pins';
 import PinsByKnockers from '../Knocker_Pins/KnockerPins';
+import MapAndAssign from '../MapAndAssign/MapAndAssign';
 
 
 
@@ -135,6 +136,8 @@ export default function Dashboard() {
       navigate('/Dashboard/createPin');
     }else if (componentName === 'DroppedPins') {
       navigate('/Dashboard/DroppedPins');
+    }else if (componentName === 'xyz') {
+      navigate('/Dashboard/AssignArea');
     }
     // setSelectedComponent(componentName);
 
@@ -241,14 +244,7 @@ export default function Dashboard() {
                 {selectedComponent=== 'map' && <MapDisplay/>}
                 {selectedComponent=== 'createPin' && <CreatePin/>}
                 {selectedComponent=== 'DroppedPins' && <PinsByKnockers/>}
-                
-
-
-
-
-
-
-                
+                {selectedComponent=== 'xyz' && <MapAndAssign/>}
                 
               </Grid>
             </Grid>

@@ -12,10 +12,10 @@
     /* display: flex; */
     position: absolute;
     top: 25%;
-    left: 25%;
+    left: 30%;
     text-align: center;
-    width: 50%;
-    height: 50vh;
+    width: 40%;
+    height: 40vh;
     background-color: white;
     /* border: 1px solid red; */
     /* background-color: white; */
@@ -25,7 +25,7 @@
 
 .SubDiv{
     position: relative;
-    top: 10%;
+    top: 5%;
     left: 25%;
     /* margin-top: 5rem; */
     width: 50%;

@@ -6,6 +6,7 @@
   import Select from 'react-select';
   import CircularProgress from '@mui/material/CircularProgress';
   import { toast, ToastContainer } from 'react-toastify';
+  import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -16,6 +17,8 @@ import 'react-toastify/dist/ReactToastify.css';
     const [selectedKnocker, setSelectedKnocker] = useState('');
     const [isLoading, setIsLoading]= useState(false);
     const token = localStorage.getItem('token');
+
+    const navigate= useNavigate();
 
     const live= "https://arbitrary-lxvlpwp3rq-uc.a.run.app"
     const local= "http://192.168.100.18:3001"
@@ -102,6 +105,7 @@ import 'react-toastify/dist/ReactToastify.css';
           });
 
           setIsLoading(false)
+          navigate('/Dashboard/knockerTable')
           toast.success('Area Assigned successfully!', {
             position: 'top-right',
             autoClose: 3000,
@@ -117,6 +121,8 @@ import 'react-toastify/dist/ReactToastify.css';
         setSelectedKnocker('');
         // window.location.reload()
         // alert("Area Assigned Successfully..!")
+       
+        
       } catch (error) {
         setIsLoading(false)
         toast.error(`Error${error}`, {
@@ -146,42 +152,17 @@ import 'react-toastify/dist/ReactToastify.css';
         {/* <div style={{textAlign:"right"}}>
         <Button variant='contained' color="primary" >X</Button>
         </div> */}
-        <h2 className='heading'>Assign Area to Knocker</h2>
+        <h2 className='heading'  style={{ textAlign: "center", marginLeft:"3rem"}}>Assign Area to Knocker</h2>
         <div className='SubDiv'>
           {areas.length > 0 && (
-          //   <select className='select' style={{marginRight:"1rem", padding:"1rem 2.5rem"}} value={selectedArea}  onChange={handleAreaChange}>
-          //     <option value="">Select an Area</option>
-          //     {areas.map((area) => (
-          //       <option key={area.id} value={area.id}>
-          //         {area.name}
-          //       </option>
-          //     ))}
-          //   </select>
-          //   <Select
-            
-          //   // className='select'
-          //   styles={{ marginRight: "1rem", padding: "1rem 2.5rem", marginBottom:"3rem",    minWidth: "30%" }}
-          //   onChange={(selectedOption) => setSelectedArea(selectedOption.value)}
-          //   value={areas.find((area) => area.id === selectedArea)}
-          //   options={areas.map((area) => ({ value: area.id, label: area.name }))}
-          //   placeholder="Select an Area"  
-          // />
-          <p style={{ color: "#1565c0", textAlign: "center" }}>
-          Selected Area: {selectedAreaName}
-          
-        </p>
+          <h3 style={{ color: "#1565c0", textAlign: "center " }}>
+          Area: {selectedAreaName}
+        </h3>
           )}
           {knockers.length > 0 && (
-            // <select className='select' style={{marginLeft:"1rem", padding:"1rem 2.3rem"}} value={selectedKnocker} onChange={handleKnockerChange}>
-            //   <option value="">Select a Knocker</option>
-            //   {knockers.map((knocker) => (
-            //     <option key={knocker.id} value={knocker.id}>
-            //       {knocker.firstName} {knocker.lastName}
-            //     </option>
-            //   ))}
-            // </select>
             <Select
       // className='select'
+      
       styles={{ 
         minWidth: "30%", 
         width:"30%",
@@ -205,10 +186,10 @@ import 'react-toastify/dist/ReactToastify.css';
           </div>
           {isLoading ? 
           (
-          <Button style={{marginTop:"16vh", marginBottom:"2vh"}}  variant="contained" color="primary">Assigning <CircularProgress size={24} style={{color:"white"}}/></Button>
+          <Button style={{marginTop:"8vh", marginBottom:"2vh"}}  variant="contained" color="primary">Assigning <CircularProgress size={24} style={{color:"white"}}/></Button>
           ):
           (
-          <Button style={{marginTop:"16vh", marginBottom:"2vh"}}  variant="contained" color="primary" onClick={assignAreaToKnocker}>Assign Area</Button>
+          <Button style={{marginTop:"8vh", marginBottom:"2vh"}}  variant="contained" color="primary" onClick={assignAreaToKnocker}>Assign Area</Button>
           )}
           </div>
           <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
