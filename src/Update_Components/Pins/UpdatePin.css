@@ -1,0 +1,6 @@
+.btnDiv{
+display: flex;  
+justify-content: space-evenly;
+/* border: 1px solid red; */
+align-items: center;
+}

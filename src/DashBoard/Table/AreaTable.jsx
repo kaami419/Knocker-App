@@ -58,7 +58,8 @@ export default function AreaTable() {
       .then((response) => {
         const fetchedData = response.data.data;
         setData(fetchedData);
-        // console.log("fetchedData:", fetchedData);
+        console.log("fetchedData:", fetchedData);
+        console.log("data", data);
 
         if (fetchedData.length > 0) {
           const dynamicColumns = Object.keys(fetchedData[0]).map((key) => {
@@ -117,11 +118,13 @@ export default function AreaTable() {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    console.log("page", page);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+    console.log("rows per page", rowsPerPage);
   };
 
   // const handleEditClick = (row) => {
@@ -196,7 +199,7 @@ export default function AreaTable() {
     const closeAssignAreaToKnockersModal = () => {
     setIsAssignAreaToKnockersModalOpen(false);
   };
-
+  const slicedData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
   return (
     <div>
        {isMapViewVisible ? ( 
@@ -211,9 +214,13 @@ export default function AreaTable() {
           <div className="assign-area">
 
             {/* <KnockersModal/> */}
-            <Button variant="contained" color="primary" onClick={openAssignAreaToKnockersModal}>
-                  Assign Area
+            <h2 style={{ color: "#1565c0", textAlign: "center",}}>
+          Selected Knockers 
+        </h2>
+        <Button variant="contained" color="primary" onClick={openAssignAreaToKnockersModal} style={{ width:".5rem", marginBottom:"2rem", marginLeft:"6.5rem" }}>
+                  +
                 </Button>
+            
                 <br></br>
             <KnockersModal
                 isOpen={true}
@@ -306,9 +313,8 @@ export default function AreaTable() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, rowIndex) => (
+                  {
+                   slicedData.map((row, rowIndex) => (
                       <TableRow
                         hover
                         role="checkbox"
@@ -689,9 +695,9 @@ function KnockersModal({
             X
           </Button>
         </div> */}
-        <h2 style={{ color: "#1565c0", textAlign: "center" }}>
-          Knockers for Selected Area
-        </h2>
+        {/* <h2 style={{ color: "#1565c0", textAlign: "center" }}>
+          Assigned Knockers
+        </h2> */}
         {selectedAreaKnockers.length === 0 ? (
           <div style={{ textAlign: "center" }}>
             <p style={{ color: "#1565c0" }}>
@@ -702,9 +708,9 @@ function KnockersModal({
           <table style={{ width: "100%" }}>
             <thead>
               <tr>
-                <th style={{ width: "50%", color: "#1565c0",  textAlign: "left"}}>User Name</th>
-                <th style={{ width: "50%", color: "red", textAlign: "right" }}>
-                  Actions
+                <th style={{ width: "50%", color: "#1565c0",  textAlign: "left"}}>Knockers</th>
+                <th style={{ width: "50%", color: "#1565c0", textAlign: "right" }}>
+                  Remove
                 </th>
               </tr>
             </thead>

@@ -4,6 +4,9 @@
   // import { Select } from '@mui/material';
   import { Button } from '@mui/material';
   import Select from 'react-select';
+  import CircularProgress from '@mui/material/CircularProgress';
+  import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
   export default function AssignAreaToKnocker({isOpen, onClose, selectedAreaName, selectedAreaId}) {
@@ -11,6 +14,7 @@
     const [knockers, setKnockers] = useState([]);
     const [selectedArea, setSelectedArea] = useState('');
     const [selectedKnocker, setSelectedKnocker] = useState('');
+    const [isLoading, setIsLoading]= useState(false);
     const token = localStorage.getItem('token');
 
     const live= "https://arbitrary-lxvlpwp3rq-uc.a.run.app"
@@ -53,6 +57,7 @@
     // };
 
     const assignAreaToKnocker = async () => {
+      setIsLoading(true)
       try {
         const selectedAreaId = areas.find((area) => area.name === selectedAreaName)?.id;
 
@@ -68,6 +73,8 @@
             Authorization: `Bearer ${token}` 
           }
         });
+
+        
 
       
         axios.get('http://34.122.133.247:3001/api/area',{
@@ -94,11 +101,34 @@
             console.error('Error fetching knockers:', error);
           });
 
+          setIsLoading(false)
+          toast.success('Area Assigned successfully!', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+
         
         setSelectedArea('');
         setSelectedKnocker('');
+        // window.location.reload()
         // alert("Area Assigned Successfully..!")
       } catch (error) {
+        setIsLoading(false)
+        toast.error(`Error${error}`, {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        
         console.error('Error assigning area to knocker:', error);
         
       }
@@ -155,7 +185,7 @@
       styles={{ 
         minWidth: "30%", 
         width:"30%",
-        marginRight: "1rem", padding: "1rem 2.3rem", marginTop:"3rem",
+        marginRight: "1rem", marginTop:"3rem",
         menu: (provided) => ({
         ...provided,
         // maxHeight: '50vh', 
@@ -165,13 +195,24 @@
         value: knocker.id,
         label: `${knocker.firstName} ${knocker.lastName}`,
       }))}
+      onClick={(selectedOption) => setSelectedKnocker(selectedOption.value)}
       onChange={(selectedOption) => setSelectedKnocker(selectedOption.value)}
+
       placeholder="Select a Knocker"
     />
           )}
           </div>
+          {isLoading ? 
+          (
+          <Button style={{marginTop:"16vh", marginBottom:"2vh"}}  variant="contained" color="primary">Assigning <CircularProgress size={24} style={{color:"white"}}/></Button>
+          ):
+          (
           <Button style={{marginTop:"16vh", marginBottom:"2vh"}}  variant="contained" color="primary" onClick={assignAreaToKnocker}>Assign Area</Button>
+          )}
+          </div>
+          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+
       </div>
-      </div>
+      
     );
   }

@@ -1,7 +1,7 @@
 import * as React  from 'react';
 import { useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+  import { toast, ToastContainer } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -122,6 +122,7 @@ setIsLoading(true);
             // handleModalOpen('Success: Sign-in successful.');
             // alert("Success: Sign-in successful.")
             localStorage.setItem('token', token);
+            setIsLoading(false); 
 
             // console.log('Sign-in successful');
             navigate('/Dashboard/knockerTable')
@@ -130,6 +131,7 @@ setIsLoading(true);
         } catch (error) {
           // console.error('Error occurred during sign-in:', error);
           // handleModalOpen(`${error.response.data.message}`);
+          setIsLoading(false); 
           toast.error(`Error: ${error.response.data.message}`, {
             position: 'top-right',
             autoClose: 5000,

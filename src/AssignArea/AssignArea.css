@@ -24,8 +24,11 @@
 }
 
 .SubDiv{
+    position: relative;
+    top: 10%;
+    left: 25%;
     /* margin-top: 5rem; */
-    width: 100%;
+    width: 50%;
     /* padding-bottom: 5rem; */
     /* display: flex;
     justify-content: space-around; */

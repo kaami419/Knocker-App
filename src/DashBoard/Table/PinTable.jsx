@@ -16,6 +16,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import UpdatePin from "../../Update_Components/Pins/UpdatePin";
+import { Modal } from '@mui/material';
+import LocationIcon from "../../Assets/LocationIcon";
+
 
 export default function PinTable() {
   const [page, setPage] = React.useState(0);
@@ -27,13 +31,52 @@ export default function PinTable() {
   const [selectedPin, setSelectedPin] = React.useState(null);
   const [idCounter, setIdCounter] = React.useState(1);
   const [editingPin, setEditingPin] = React.useState(false);
+  const [isUpdatePinModalOpen, setIsUpdatePinModalOpen] = React.useState(false);
+  const [selectedRowData, setSelectedRowData] = React.useState(null);
+  const [selectedPinForEdit, setSelectedPinForEdit] = React.useState(null);
+  // const [tableData, setTableData] = React.useState([]);
+
+
+
+
 
   const navigate = useNavigate();
 
+  const refreshTableData = () => {
+    axios
+      .get(`http://34.122.133.247:3001/api/pin`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const fetchedData = response.data.data;
+        setData(fetchedData);
+        console.log("Data refreshed:", fetchedData); 
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
+
   const handleEditIconClick = (pinData) => {
-    setSelectedPin(pinData);
-    setPin(true);
-    setEditingPin(true);
+    // setSelectedPin(pinData);
+    // setPin(true);
+    // setEditingPin(true);
+    // setSelectedRowData(pinData);
+    // setIsUpdatePinModalOpen(true);
+    // setSelectedPinForEdit(pinData);
+    // setIsUpdatePinModalOpen(true);
+    setSelectedPinForEdit(pinData);
+
+    // Open the UpdatePin modal
+    setIsUpdatePinModalOpen(true);
+  
+  };
+
+  const handleCloseUpdatePinModal = () => {
+    setIsUpdatePinModalOpen(false);
   };
 
   React.useEffect(() => {
@@ -80,6 +123,14 @@ export default function PinTable() {
               return {
                 id: key,
                 label: "Status",
+                minWidth: 170,
+                align: "left",
+              };
+            }
+            if (key === "assign") {
+              return {
+                id: key,
+                label: "Allow Re-Assign",
                 minWidth: 170,
                 align: "left",
               };
@@ -197,7 +248,7 @@ export default function PinTable() {
                     {columns.map((column) => (
                       <TableCell
                         key={column.id}
-                        align="left"
+                        align="center"
                         style={{
                           minWidth: column.minWidth,
                           color: "#1565c0",
@@ -208,14 +259,14 @@ export default function PinTable() {
                       </TableCell>
                     ))}
                     <TableCell
-                      align="left"
+                      align="center"
                       style={{ color: "#1565c0", backgroundColor: "lightgray" }}
                     >
                       Edit
                     </TableCell>
                     <TableCell
-                      align="left"
-                      style={{ color: "#1565c0", backgroundColor: "lightgray" }}
+                      align="center"
+                      style={{ color: "#1565c0", backgroundColor: "lightgray", marginLeft:"2rem" }}
                     >
                       Delete
                     </TableCell>
@@ -235,7 +286,7 @@ export default function PinTable() {
                           {data.length - rowIndex}
                         </TableCell>
 
-                        {columns.map((column) => {
+                        {/* {columns.map((column) => {
                           const value = row[column.id];
                           console.log("Row:", row);
                           console.log("Column:", column);
@@ -278,7 +329,60 @@ export default function PinTable() {
                               ))}
                             </TableCell>
                           );
-                        })}
+                        })} */}
+                        {columns.map((column) => {
+  const value = row[column.id];
+  // console.log("Row:", row);
+  // console.log("Column:", column);
+
+  if (column.id === "createdAt") {
+    const date = new Date(value);
+    const options = {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    };
+    const formattedDate = date.toLocaleDateString(
+      "en-GB",
+      options
+    );
+    return (
+      <TableCell key={column.id} align="center">
+        {formattedDate}
+      </TableCell>
+    );
+  }else if (typeof value === "string" && value !== null && value !== undefined) {
+
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+      return (
+        <TableCell key={column.id} align="center">
+          {/* <img
+            src={value}
+            alt="Image"
+            style={{
+              maxWidth: "100%",
+              // maxHeight: "5rem",
+              width: "15%",
+            }}
+          /> */}
+          <LocationIcon fill={row.color} />
+        </TableCell>
+      );
+    } else {
+      return (
+        <TableCell key={column.id} align="center">
+          {value}
+        </TableCell>
+      );
+    }
+  }else {
+    return (
+      <TableCell key={column.id} align="center">
+        {value === 1 ? "true": "false"}
+      </TableCell>
+    );
+  }
+})}
 
                         <TableCell>
                           <button
@@ -297,10 +401,11 @@ export default function PinTable() {
                           <button
                             onClick={() => handleDeleteIconClick(row)}
                             style={{
-                              color: "#1565c0",
+                              color: "red",
                               cursor: "pointer",
                               border: "none",
                               background: "none",
+                              marginLeft:"1rem"
                             }}
                           >
                             <DeleteIcon />
@@ -322,8 +427,27 @@ export default function PinTable() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
+
         </div>
       )}
+      {isUpdatePinModalOpen && (
+        <Modal  
+        open={isUpdatePinModalOpen}
+        onClose={handleCloseUpdatePinModal}
+        >
+        <div className="modal-content-3">
+  <UpdatePin
+    selectedPin={selectedPinForEdit}
+    onClose={() => {
+      setIsUpdatePinModalOpen(false);
+      
+    }}
+    refreshTableData={refreshTableData}
+  />
+   </div>
+        </Modal>
+)}
+
     </div>
   );
 }

@@ -168,13 +168,15 @@ setIsLoading(true);
       
       // alert('Success: Knocker created successfully.');
       // navigate('/Dashboard/knockersList')
-      setTable(!table)
+      setIsLoading(false);
+      // setTable(!table)
+      navigate("/Dashboard/knockerTable")
       
      
     } catch (error) {
       console.error('API Error:', error);
       if (error.response && error.response.data && error.response.data.message) {
-        
+        setIsLoading(false);
         setErrorMessage(error.response.data.message); 
         console.log("error msg:", errorMessage);
         // handleModalOpen('Error', error.response.data.message);
@@ -187,7 +189,10 @@ setIsLoading(true);
           draggable: true,
           progress: undefined,
         });
+      
       } else {
+        setIsLoading(false);
+        console.log("error", errorMessage.message);
         setErrorMessage("An error occurred. Please try again later."); 
         toast.error(`Error: ${errorMessage}`, {
           position: 'top-right',
@@ -198,22 +203,23 @@ setIsLoading(true);
           draggable: true,
           progress: undefined,
         });
+       
       }
       
     }
   };
    
-  React.useEffect(() => {
-    setFormData({
-      firstName: selectedUser ? selectedUser.firstName : '',
-      lastName: selectedUser ? selectedUser.lastName : '',
-      userName: selectedUser ? selectedUser.userName : '',
-      email: selectedUser ? selectedUser.email : '',
-      phone: selectedUser ? selectedUser.phone : '',
-      password: selectedUser ? selectedUser.password: '',
+  // React.useEffect(() => {
+  //   setFormData({
+  //     firstName: selectedUser ? selectedUser.firstName : '',
+  //     lastName: selectedUser ? selectedUser.lastName : '',
+  //     userName: selectedUser ? selectedUser.userName : '',
+  //     email: selectedUser ? selectedUser.email : '',
+  //     phone: selectedUser ? selectedUser.phone : '',
+  //     password: selectedUser ? selectedUser.password: '',
 
-    });
-  }, [selectedUser]);
+  //   });
+  // }, [selectedUser]);
 
   const handleUpdateUser = async () => {
     // Construct the updated user data object
@@ -248,10 +254,11 @@ setIsLoading(true);
       setTable(!table)
 
       
-      // navigate('/Dashboard/knockersList')
+      // navigate('/Dashboard/knockersTable')
+      // window.location.reload();
     } catch (error) {
       // setErrorMessage(error.response.data.message); 
-
+console.log("error", error.response.data.message);
       toast.error(`${error.response.data.message}`, {
         position: 'top-right',
         autoClose: 5000,

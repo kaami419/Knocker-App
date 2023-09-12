@@ -18,8 +18,9 @@ import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import PinTable from '../DashBoard/Table/PinTable';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, ToggleButton } from '@mui/material';
 import { ChromePicker } from 'react-color';
+import './Pins.css'
 
 
 
@@ -34,10 +35,17 @@ export default function CreatePin({selectedPin, editingPin}) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [showColorPicker, setShowColorPicker] = React.useState(false);
 
+  const [isOn, setIsOn] = React.useState(false);
+
+  const toggle = () => {
+    setIsOn(!isOn);
+  };
+
     const [pinData, setPinData] = React.useState({
         name: '',
         image: '',
         color: selectedColor,
+        assign: isOn
       });
     const token = localStorage.getItem('token');
 
@@ -45,7 +53,7 @@ export default function CreatePin({selectedPin, editingPin}) {
     if (selectedPin) {
       setPinData({
         name: selectedPin.name,
-        image: selectedPin.image,
+        image: selectedPin.image, 
       });
     }
   }, [selectedPin]);
@@ -56,8 +64,9 @@ export default function CreatePin({selectedPin, editingPin}) {
       
         const pinData = {
           name: data.get('name'), 
-          image: data.get('image'), 
+          image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRTmlCvd2yT5w_7CItMvma_IwYGc5beKz5zrOIRK_FyP4819KUpqRzZo5bu-HQY4yFsSs&usqp=CAU', 
           color: selectedColor,
+          assign: isOn
         };
 setIsLoading(true);
       
@@ -68,6 +77,7 @@ setIsLoading(true);
             }
           });
           console.log('Pin created:', response.data);
+          setIsLoading(false);
           toast.success(`${response.data.message}`, {
             position: 'top-right',
             autoClose: 3000,
@@ -77,9 +87,11 @@ setIsLoading(true);
             draggable: true,
             progress: undefined,
           });
-          setPin(!pin)
+          // setPin(!pin)
+          navigate("/Dashboard/pins")
 
         } catch (error) {
+          setIsLoading(false);
           
           toast.error(`Error: ${error.response.data.message}`, {
             position: 'top-right',
@@ -96,7 +108,9 @@ setIsLoading(true);
       };
 
       const handleUpdate = async () => {
+        setIsLoading(true);
         try {
+          
           const response = await axios.put(
             `http://34.122.133.247:3001/api/pin?id=${selectedPin.id}`,
             {
@@ -111,6 +125,7 @@ setIsLoading(true);
             }
           );
           console.log('Pin updated:', response.data);
+          setIsLoading(false);
           toast.success(`${response.data.message}`, {
             position: 'top-right',
             autoClose: 3000,
@@ -121,8 +136,11 @@ setIsLoading(true);
             progress: undefined,
           });
           // alert('Pin updated successfully');
+          // window.location.reload();
+          
           setPin(!pin)
         } catch (error) {
+          setIsLoading(false);
           toast.error(`Error: ${error.response.data}`, {
             position: 'top-right',
             autoClose: 5000,
@@ -157,7 +175,7 @@ setIsLoading(true);
 
   return (
     <div>
-    {pin?<PinTable/>:
+    {pin?<PinTable selectedColor={selectedColor}/>:
     <div>
                    {/* <div className='viewAreaListDiv'>
            <Button variant='contained' color='primary' onClick={()=>{setPin(!pin); navigate("/Dashboard/pins")}}>View Pins Listing</Button>
@@ -177,7 +195,7 @@ setIsLoading(true);
             <FmdGoodIcon />
           </Avatar>
           <Typography component="h1" variant="h5" style={{color:"#1565c0"}}>
-            Create A Pin
+            Pin Creation
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -195,40 +213,60 @@ setIsLoading(true);
             <TextField
             //   margin="normal"
             style={{marginBottom:"2rem"}}
+            type='color'
               required
               fullWidth
-              id="Image"
-              label="Image Link"
-              name="image"
-              value={pinData.image}
-              onChange={handleInputChange}
+              id="color"
+              label="color"
+              name="color"  
+              value={selectedColor}
+              onClick={handleColorChange}
             //   autoComplete="current-Image"
             //   autoFocus
             />
-
-<div>
+            <div>
+      <label>
+      Allow Re-Assign:{" "}
+        <input
+          type="checkbox"
+          checked={isOn}
+          onChange={toggle}
+        />
+      </label>
+      
+      {/* <p>Allow Re-Assign: {isOn ? "On" : "Off"}</p> */}
+    </div>
+    <br></br>
+            {/* <p>Allow Re-Assign</p> */}
+            
+<div className='PinBtnDiv'>
+<div style={{width:"45%"}}>
           
           <Button
-          style={{paddingRight:"1rem"}}
+           sx={{ mb: 2 }}
+          //  style={{padding:"1rem, 1rem"}}
+           halfWidth
+          // style={{marginBottom:"2rem"}}
             variant="contained"
             onClick={handleColorButtonClick} // Toggle color picker visibility on button click
           >
             Select Color 
           </Button>
-          {showColorPicker && (
-            <ChromePicker color={selectedColor} onChange={handleColorChange} />
-          )}
+          
+         
           
         </div>
             {/* <ChromePicker color={selectedColor} onChange={handleColorChange} /> */}
-
+<div style={{width:"45%"}}>
              {isLoading ? (
                   <Button 
-                  halfwidth="true"
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
+                  sx={{ mb: 2 }}
+                  //  style={{padding:"1rem, 1rem"}}
+                   halfWidth
+                  // style={{marginBottom:"2rem"}}
+                    variant="contained"
                   >   
-          <CircularProgress color="inherit" size={24} /> 
+          <CircularProgress color="inherit" size={50} /> 
           </Button>
         ) : (
              editingPin? (
@@ -237,7 +275,7 @@ setIsLoading(true);
             onClick={handleUpdate}
             halfWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mb: 2 }}
           >
             Update Pin
           </Button>
@@ -247,12 +285,23 @@ setIsLoading(true);
               type="submit"
               halfWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mb: 2 }}
             >
               Create This Pin
             </Button>
              )
         )}
+        </div>
+
+        </div>
+
+        <div>
+        {showColorPicker && (
+            <div style={{marginTop:"1rem", marginLeft:"2rem", marginBottom:"2rem"}}>
+            <ChromePicker color={selectedColor} onChange={handleColorChange}  />
+            </div>
+          )}
+        </div>
 
           </Box>
         </Box>

@@ -15,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Modal } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import MapDisplay from '../../Map/Map';
+import UpdateKnocker from '../../Update_Components/Knockers/UpdateKnocker';
 
 // import areaTable from './AreaTable';
 // import PreRegisterationTable from './PreRegisterationTable'; 
@@ -42,8 +43,25 @@ export default function StickyHeadTable() {
     email: selectedUser ? selectedUser.email : '',
     phone: selectedUser ? selectedUser.phone : '',
   });
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
   const token = localStorage.getItem('token');
+
+  const refreshTableData = () => {
+    
+    axios.get('http://34.122.133.247:3001/api/knocker/all', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      const fetchedData = response.data.data;
+      setData(fetchedData);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+  };
 
 
   React.useEffect(() => {
@@ -174,6 +192,11 @@ export default function StickyHeadTable() {
     }
   };
 
+  const handleEditClick = (row) => {
+    setSelectedUser(row);
+    setIsEditModalOpen(true);
+  };
+
 
 
 
@@ -264,14 +287,11 @@ export default function StickyHeadTable() {
                         })}
                         <TableCell>
                           <EditIcon
+                          style={{cursor:"pointer"}}
                             variant="contained"
                             color="primary"
-                            onClick={() => {
-                              console.log('Edit icon clicked');
-                              setSelectedUser(row);
-                              setKnocker(!knocker);
-                              setEditingPin(editingPin)
-                              // navigate('/Dashboard/updateKnocker')
+                            onClick={() => { 
+                              handleEditClick(row) 
                             }}>
                           </EditIcon>
                         </TableCell>
@@ -290,6 +310,7 @@ export default function StickyHeadTable() {
                         </TableCell>
                       </TableRow>
                     ))}
+
                   {selectedUser && (
                     <AreasModal
                       user={selectedUser}
@@ -319,6 +340,18 @@ export default function StickyHeadTable() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
+
+          {selectedUser && isEditModalOpen && (
+               <Modal open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+                  <div className="modal-content-3">
+        <UpdateKnocker
+          selectedUser={selectedUser}
+          onClose={() => setIsEditModalOpen(false)}
+          refreshTableData={refreshTableData}
+        />
+        </div>
+        </Modal>
+      )}
 
         </div>
       }

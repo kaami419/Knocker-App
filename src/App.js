@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -19,25 +19,19 @@ import AuthMiddleware from "./Middleware/Auth";
 
 function App() {
   return (
-    // <div className="App">
-    //   <AuthMiddleware>
-    //   <Routes>
-    //   <Route path="/Dashboard" element={<Dashboard/>}/>
-    //   <Route path="/Dashboard/:selectedComponent" element={<Dashboard />} />
-    //   <Route path="/" element={<UserSignIn />}></Route>
-    //   </Routes>
-     
-    //   <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-    //   </AuthMiddleware>
-    // </div>
+
     <div className="App">
+      <BrowserRouter>
       
-        <AuthMiddleware /> {/* Place AuthMiddleware outside the Routes */}
+        <AuthMiddleware /> 
         <Routes>
           <Route path="/Dashboard" element={<Dashboard />}/>
           <Route path="/Dashboard/:selectedComponent" element={<Dashboard />} />
           <Route path="/" element={<UserSignIn />}></Route>
         </Routes>
+
+      </BrowserRouter>
+
      
 
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
