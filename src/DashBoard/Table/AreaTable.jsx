@@ -1,6 +1,6 @@
 import * as React from "react";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import axios from "axios";
 import Paper from "@mui/material/Paper";
@@ -21,8 +21,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AssignAreaToKnocker from "../../AssignArea/AssignArea";
 
-
-
 export default function AreaTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -38,12 +36,10 @@ export default function AreaTable() {
   const [isMapViewVisible, setIsMapViewVisible] = useState(false);
   const [selectedAreaId, setSelectedAreaId] = useState(null);
   const [isAssignAreaModalOpen, setIsAssignAreaModalOpen] = useState(false);
-  const [isAssignAreaToKnockersModalOpen, setIsAssignAreaToKnockersModalOpen] = useState(false);
-  const [selectedAreaName, setSelectedAreaName] = useState(""); 
-  // const [selectedAreaNameId, setSelectedAreaNameId] = useState(""); 
-
-
-
+  const [isAssignAreaToKnockersModalOpen, setIsAssignAreaToKnockersModalOpen] =
+    useState(false);
+  const [selectedAreaName, setSelectedAreaName] = useState("");
+  // const [selectedAreaNameId, setSelectedAreaNameId] = useState("");
 
   const location = useLocation();
   const req = "192.168.100.18";
@@ -150,8 +146,8 @@ export default function AreaTable() {
     setIsMapViewVisible(true);
     setArea(true);
     setSelectedAreaId(row.id);
-    console.log("row name",selectedAreaId);
-    
+    console.log("row name", selectedAreaId);
+
     // console.log("coordinates", coordinates);
     // console.log("selectedCoordinates",selectedCoordinates);
     // navigate("/Dashboard/map");  //work on this
@@ -176,7 +172,7 @@ export default function AreaTable() {
         setIsKnockersModalOpen(true);
       } else {
         console.error("No area data found");
-        setSelectedAreaKnockers([]); 
+        setSelectedAreaKnockers([]);
         setIsKnockersModalOpen(true);
       }
       setIsKnockersModalOpen(true);
@@ -196,60 +192,61 @@ export default function AreaTable() {
     setIsAssignAreaModalOpen(false);
   };
 
-    const closeAssignAreaToKnockersModal = () => {
+  const closeAssignAreaToKnockersModal = () => {
     setIsAssignAreaToKnockersModalOpen(false);
   };
   const slicedData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
   return (
     <div>
-       {isMapViewVisible ? ( 
-        
+      {isMapViewVisible ? (
         <div className="map-and-assign-area">
-
+          <Button onClick={()=>{setIsMapViewVisible(!isMapViewVisible);setArea(!area)}}>back</Button>
           <div className="map-display">
-            <MapDisplay
-              selectedCoordinates={selectedCoordinates}
-            />
+            <MapDisplay selectedCoordinates={selectedCoordinates} />
           </div>
           <div className="assign-area">
-
             {/* <KnockersModal/> */}
-            <h2 style={{ color: "#1565c0", textAlign: "center",}}>
-          Selected Knockers 
-        </h2>
-        <Button variant="contained" color="primary" onClick={openAssignAreaToKnockersModal} style={{ width:".5rem", marginBottom:"2rem", marginLeft:"6.5rem" }}>
-                  +
-                </Button>
-            
-                <br></br>
-            <KnockersModal
-                isOpen={true}
-                onClose={() => setIsAssignAreaModalOpen(false)}
-                selectedAreaKnockers={selectedAreaKnockers}
-                setSelectedAreaKnockers={setSelectedAreaKnockers}
-              />
-                      <Modal
-                    className="AssignAreaModal"
-        open={isAssignAreaToKnockersModalOpen}
-        onClose={closeAssignAreaToKnockersModal}
-        selectedAreaName={selectedAreaName}
-        
-      >
-        <div className="AssignAreaInner">
-          <AssignAreaToKnocker
-            isOpen={isAssignAreaToKnockersModalOpen}
-            onClose={closeAssignAreaToKnockersModal}
-            selectedAreaName={selectedAreaName}
-            selectedAreaId={selectedAreaId}
-            
-          />
-        </div>
-      </Modal>
+            <h2 style={{ color: "#1565c0", textAlign: "center" }}>
+              Selected Knockers
+            </h2>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={openAssignAreaToKnockersModal}
+              style={{
+                width: ".5rem",
+                marginBottom: "2rem",
+                marginLeft: "6.5rem",
+              }}
+            >
+              +
+            </Button>
 
+            <br></br>
+            <KnockersModal
+              isOpen={true}
+              onClose={() => setIsAssignAreaModalOpen(false)}
+              selectedAreaKnockers={selectedAreaKnockers}
+              setSelectedAreaKnockers={setSelectedAreaKnockers}
+            />
+            <Modal
+              className="AssignAreaModal"
+              open={isAssignAreaToKnockersModalOpen}
+              onClose={closeAssignAreaToKnockersModal}
+              selectedAreaName={selectedAreaName}
+            >
+              <div className="AssignAreaInner">
+                <AssignAreaToKnocker
+                  isOpen={isAssignAreaToKnockersModalOpen}
+                  onClose={closeAssignAreaToKnockersModal}
+                  selectedAreaName={selectedAreaName}
+                  selectedAreaId={selectedAreaId}
+                />
+              </div>
+            </Modal>
           </div>
         </div>
-      ) : (
-      area ? (
+      ) : area ? (
         <MapDisplay selectedCoordinates={selectedCoordinates} />
       ) : (
         <div>
@@ -313,55 +310,54 @@ export default function AreaTable() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {
-                   slicedData.map((row, rowIndex) => (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={rowIndex}
-                      >
-                        <TableCell align="left">
-                          {data.length - rowIndex}
-                        </TableCell>
-                        {columns.map((column) => {
-                          const value = row[column.id];
+                  {slicedData.map((row, rowIndex) => (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={rowIndex}
+                    >
+                      <TableCell align="left">
+                        {data.length - rowIndex}
+                      </TableCell>
+                      {columns.map((column) => {
+                        const value = row[column.id];
 
-                          if (column.id === "path") {
-                            const formattedCoordinates = value.map(
-                              (coordinatePair) => {
-                                const formattedPair = coordinatePair.map(
-                                  (coordinate) =>
-                                    parseFloat(coordinate).toFixed(2)
-                                );
-                                return formattedPair.join(" ");
-                              }
-                            );
+                        if (column.id === "path") {
+                          const formattedCoordinates = value.map(
+                            (coordinatePair) => {
+                              const formattedPair = coordinatePair.map(
+                                (coordinate) =>
+                                  parseFloat(coordinate).toFixed(2)
+                              );
+                              return formattedPair.join(" ");
+                            }
+                          );
 
-                            return (
-                              <TableCell key={column.id} align="left">
-                                {formattedCoordinates.join(", ")}
+                          return (
+                            <TableCell key={column.id} align="left">
+                              {formattedCoordinates.join(", ")}
+                            </TableCell>
+                          );
+                        }
+
+                        if (column.id === "createdAt") {
+                          const date = new Date(value);
+                          const options = {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          };
+                          const formattedDate = date.toLocaleDateString(
+                            "en-GB",
+                            options
+                          );
+                          return (
+                            <>
+                              <TableCell key={column.id} align="center">
+                                {formattedDate}
                               </TableCell>
-                            );
-                          }
-
-                          if (column.id === "createdAt") {
-                            const date = new Date(value);
-                            const options = {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            };
-                            const formattedDate = date.toLocaleDateString(
-                              "en-GB",
-                              options
-                            );
-                            return (
-                              <>
-                                <TableCell key={column.id} align="center">
-                                  {formattedDate}
-                                </TableCell>
-                                {/* <TableCell>
+                              {/* <TableCell>
                 <button
                   onClick={() => handleEditClick(row)}
                   style={{ color: '#1565c0', cursor: 'pointer', border: 'none', background: 'none' }}
@@ -369,31 +365,31 @@ export default function AreaTable() {
                   Edit
                 </button>
               </TableCell> */}
-                                <TableCell style={{ paddingRight: "4rem" }}>
-                                  <RemoveRedEyeRoundedIcon
-                                    onClick={() => {
-                                      handleViewClick(row);
-                                      handleViewKnockersClick(row.id);
-                                    }}
-                                    style={{
-                                      color: "#1565c0",
-                                      cursor: "pointer",
-                                      border: "none",
-                                      background: "none",
-                                    }}
-                                  />
-                                </TableCell>
-                              </>
-                            );
-                          }
-
-                          return (
-                            <TableCell key={column.id} align="center">
-                              {value}
-                            </TableCell>
+                              <TableCell style={{ paddingRight: "4rem" }}>
+                                <RemoveRedEyeRoundedIcon
+                                  onClick={() => {
+                                    handleViewClick(row);
+                                    handleViewKnockersClick(row.id);
+                                  }}
+                                  style={{
+                                    color: "#1565c0",
+                                    cursor: "pointer",
+                                    border: "none",
+                                    background: "none",
+                                  }}
+                                />
+                              </TableCell>
+                            </>
                           );
-                        })}
-                        {/* <TableCell>
+                        }
+
+                        return (
+                          <TableCell key={column.id} align="center">
+                            {value}
+                          </TableCell>
+                        );
+                      })}
+                      {/* <TableCell>
                           <Button
                             variant="contained"
                             color="primary"
@@ -402,8 +398,8 @@ export default function AreaTable() {
                             Knockers
                           </Button>
                         </TableCell> */}
-                      </TableRow>
-                    ))}
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -425,7 +421,7 @@ export default function AreaTable() {
             onClose={() => setIsKnockersModalOpen(false)}
           />
         </div>
-      ))}
+      )}
     </div>
   );
 }
@@ -528,7 +524,7 @@ export default function AreaTable() {
 //   selectedAreaKnockers,
 //   setSelectedAreaKnockers,
 // }) {
-  
+
 //   const token = localStorage.getItem("token");
 
 //   const handleDeleteKnocker = async (usersAreasId) => {
@@ -685,7 +681,7 @@ function KnockersModal({
   }
 
   return (
-    <div >
+    <div>
       <div>
         {/* <div
           
@@ -708,8 +704,14 @@ function KnockersModal({
           <table style={{ width: "100%" }}>
             <thead>
               <tr>
-                <th style={{ width: "50%", color: "#1565c0",  textAlign: "left"}}>Knockers</th>
-                <th style={{ width: "50%", color: "#1565c0", textAlign: "right" }}>
+                <th
+                  style={{ width: "50%", color: "#1565c0", textAlign: "left" }}
+                >
+                  Knockers
+                </th>
+                <th
+                  style={{ width: "50%", color: "#1565c0", textAlign: "right" }}
+                >
                   Remove
                 </th>
               </tr>
@@ -720,14 +722,18 @@ function KnockersModal({
                   <td style={{ width: "50%", color: "#1565c0" }}>
                     {knocker.userName}
                   </td>
-                  <td style={{ width: "50%", color: "red", textAlign: "right" }}>
+                  <td
+                    style={{ width: "50%", color: "red", textAlign: "right" }}
+                  >
                     <DeleteIcon
                       style={{
                         width: "1.3rem",
                         cursor: "pointer",
                         marginRight: "1rem",
                       }}
-                      onClick={() => handleDeleteKnocker(knocker.users_areas.id)}
+                      onClick={() =>
+                        handleDeleteKnocker(knocker.users_areas.id)
+                      }
                     />
                   </td>
                 </tr>
@@ -739,4 +745,3 @@ function KnockersModal({
     </div>
   );
 }
-
