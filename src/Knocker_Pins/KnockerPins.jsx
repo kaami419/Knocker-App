@@ -46,6 +46,8 @@ export default function PinsByKnockers() {
   const [pinImageColor, setPinImageColor] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedKnockerForEdit, setSelectedKnockerForEdit] = useState(null);
+  const [selectedKnockerPayload, setSelectedKnockerPayload] = useState(null);
+
   const [selectedDate, setSelectedDate] = useState("");
   const [knockers, setKnockers] = useState([]);
   const [selectedKnocker, setSelectedKnocker] = useState('');
@@ -472,13 +474,14 @@ width:"60%",}}
   <div className="modal-content">
     <h2 style={{color:"#1565c0"}}>Edit Assigned To</h2>
     <Select
-      value={selectedKnockerForEdit}
+      value={selectedKnockerPayload ? selectedKnockerPayload.knocker : null}
       onChange={(selectedOption) => {
         const newData = {
           ...selectedKnockerForEdit,
           assigned: selectedOption.value
         }
         setSelectedKnockerForEdit(newData);
+        setSelectedKnockerPayload(selectedOption);
         // console.log('here',selectedKnockerForEdit);
        
       }}

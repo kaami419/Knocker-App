@@ -190,13 +190,14 @@ import 'react-toastify/dist/ReactToastify.css';
         ...provided,
         // maxHeight: '50vh', 
       }), }}
-      value={knockers.find((knocker) => knocker.id === selectedKnocker)}
+      value={selectedKnocker ? selectedKnocker.label : null}
+      // value={knockers.find((knocker) => knocker.id === selectedKnocker)}
       options={knockers.map((knocker) => ({
         value: knocker.id,
         label: `${knocker.firstName} ${knocker.lastName}`,
       }))}
-      onClick={(selectedOption) => setSelectedKnocker(selectedOption.value)}
-      onChange={(selectedOption) => setSelectedKnocker(selectedOption.value)}
+      // onClick={(selectedOption) => setSelectedKnocker(selectedOption.value)}
+      onChange={(selectedOption) =>{ setSelectedKnocker(selectedOption.value)}}
 
       placeholder="Select a Knocker"
     />
