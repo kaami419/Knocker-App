@@ -199,53 +199,66 @@ export default function AreaTable() {
   return (
     <div>
       {isMapViewVisible ? (
-        <div className="map-and-assign-area">
-          <Button onClick={()=>{setIsMapViewVisible(!isMapViewVisible);setArea(!area)}}>back</Button>
-          <div className="map-display">
-            <MapDisplay selectedCoordinates={selectedCoordinates} />
-          </div>
-          <div className="assign-area">
-            {/* <KnockersModal/> */}
-            <h2 style={{ color: "#1565c0", textAlign: "center" }}>
-              Selected Knockers
-            </h2>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={openAssignAreaToKnockersModal}
-              style={{
-                width: ".5rem",
-                marginBottom: "2rem",
-                marginLeft: "6.5rem",
-              }}
-            >
-              +
-            </Button>
+        <>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{marginBottom:"1rem"}}
+            onClick={() => {
+              setIsMapViewVisible(!isMapViewVisible);
+              setArea(!area);
+            }}
+          >
+            Back
+          </Button>
 
-            <br></br>
-            <KnockersModal
-              isOpen={true}
-              onClose={() => setIsAssignAreaModalOpen(false)}
-              selectedAreaKnockers={selectedAreaKnockers}
-              setSelectedAreaKnockers={setSelectedAreaKnockers}
-            />
-            <Modal
-              className="AssignAreaModal"
-              open={isAssignAreaToKnockersModalOpen}
-              onClose={closeAssignAreaToKnockersModal}
-              selectedAreaName={selectedAreaName}
-            >
-              <div className="AssignAreaInner">
-                <AssignAreaToKnocker
-                  isOpen={isAssignAreaToKnockersModalOpen}
-                  onClose={closeAssignAreaToKnockersModal}
-                  selectedAreaName={selectedAreaName}
-                  selectedAreaId={selectedAreaId}
-                />
-              </div>
-            </Modal>
+          <div className="map-and-assign-area">
+            <div className="map-display">
+              <MapDisplay selectedCoordinates={selectedCoordinates} />
+            </div>
+            <div className="assign-area">
+              {/* <KnockersModal/> */}
+              <h2 style={{ color: "#1565c0", textAlign: "center" }}>
+                Selected Knockers
+              </h2>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={openAssignAreaToKnockersModal}
+                style={{
+                  width: ".5rem",
+                  marginBottom: "2rem",
+                  marginLeft: "6.5rem",
+                }}
+              >
+                +
+              </Button>
+
+              <br></br>
+              <KnockersModal
+                isOpen={true}
+                onClose={() => setIsAssignAreaModalOpen(false)}
+                selectedAreaKnockers={selectedAreaKnockers}
+                setSelectedAreaKnockers={setSelectedAreaKnockers}
+              />
+              <Modal
+                className="AssignAreaModal"
+                open={isAssignAreaToKnockersModalOpen}
+                onClose={closeAssignAreaToKnockersModal}
+                selectedAreaName={selectedAreaName}
+              >
+                <div className="AssignAreaInner">
+                  <AssignAreaToKnocker
+                    isOpen={isAssignAreaToKnockersModalOpen}
+                    onClose={closeAssignAreaToKnockersModal}
+                    selectedAreaName={selectedAreaName}
+                    selectedAreaId={selectedAreaId}
+                  />
+                </div>
+              </Modal>
+            </div>
           </div>
-        </div>
+        </>
       ) : area ? (
         <MapDisplay selectedCoordinates={selectedCoordinates} />
       ) : (
@@ -414,12 +427,14 @@ export default function AreaTable() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
-          <KnockersModal
-            setSelectedAreaKnockers={setSelectedAreaKnockers}
-            selectedAreaKnockers={selectedAreaKnockers}
-            isOpen={isKnockersModalOpen}
-            onClose={() => setIsKnockersModalOpen(false)}
-          />
+          {area && isMapViewVisible && (
+            <KnockersModal
+              setSelectedAreaKnockers={setSelectedAreaKnockers}
+              selectedAreaKnockers={selectedAreaKnockers}
+              isOpen={isKnockersModalOpen}
+              onClose={() => setIsKnockersModalOpen(false)}
+            />
+          )}
         </div>
       )}
     </div>
