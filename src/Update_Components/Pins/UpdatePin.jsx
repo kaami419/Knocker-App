@@ -55,10 +55,9 @@ export default function UpdatePin({ selectedPin, onClose, refreshTableData }) {
       onClose();
       refreshTableData();
     } catch (error) {
-      // Handle errors, display error messages, etc.
-      console.error('Error updating pin:', error);
+      // console.error('Error updating pin:', error.response.data.message);
       setIsLoading(false);
-      toast.error(`Error: ${error}`, {
+      toast.error(`Error: ${error.response.data.message}`, {
         position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,

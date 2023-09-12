@@ -223,6 +223,7 @@ setIsLoading(true);
               onClick={handleColorChange}
             //   autoComplete="current-Image"
             //   autoFocus
+            disabled={true}
             />
             <div>
       <label>

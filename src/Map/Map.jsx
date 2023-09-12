@@ -238,7 +238,7 @@ export default function MapDisplay({
                         color: "white",
                         borderStyle: "none",
                         borderRadius: ".2rem",
-                        marginLeft: "5rem",
+                        marginLeft: "3rem",
                       }}
                       onClick={() => {
                         onSaveButtonClick();

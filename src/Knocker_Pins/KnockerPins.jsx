@@ -45,7 +45,7 @@ export default function PinsByKnockers() {
   const [pinImageUrl, setPinImageUrl] = useState("");
   const [pinImageColor, setPinImageColor] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedKnockerForEdit, setSelectedKnockerForEdit] = useState(null);
+  const [ selectedKnockerForEdit, setSelectedKnockerForEdit] = useState(null);
   const [selectedKnockerPayload, setSelectedKnockerPayload] = useState(null);
 
   const [selectedDate, setSelectedDate] = useState("");
@@ -195,6 +195,78 @@ const handleFilter= ()=>{
       console.error("Error fetching data:", error);
     });
 }
+
+  const fetchTableData = () => {
+    let apiUrl = `http://34.122.133.247:3001/api/pin/drop?page=${page}&limit=${rowsPerPage}`
+    axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(response => {
+        const apiData = response.data.data;
+        setRows(apiData);
+        const total = response.data.total;
+        setPagination(prevPagination => ({ ...prevPagination, total }));
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
+  const handleSaveButtonClick = () => {
+    if (selectedKnockerForEdit) {
+
+      if (selectedKnockerForEdit) {
+        const updateApiUrl = `http://34.122.133.247:3001/api/pin/drop`;
+        axios
+          .put(updateApiUrl, selectedKnockerForEdit, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            // console.log('Data updated successfully:', response.data);
+            setIsEditModalOpen(false);
+            fetchTableData();
+            toast.success('Updated successfully!', {
+              position: 'top-right',
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
+          })
+          .catch((error) => {
+            // console.error('Error updating data:', error);
+
+            toast.error(`Error: ${error.response.data.message}`, {
+              position: 'top-right',
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
+          });
+      } else {
+        // console.error('No knocker selected.');
+        toast.error(`Some Error Occurred`, {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    }
+   
+  };
 
 
 // handle filter yaha end ho rha hai
@@ -497,57 +569,7 @@ width:"60%",}}
       variant="contained"
       color="primary"
 
-      onClick={() => {
-        if (selectedKnockerForEdit) {
-
-        if (selectedKnockerForEdit) {
-          const updateApiUrl = `http://34.122.133.247:3001/api/pin/drop`;
-
-    
-          axios
-            .put(updateApiUrl, selectedKnockerForEdit, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            })
-            .then((response) => {
-              console.log('Data updated successfully:', response.data);
-              setIsEditModalOpen(false);
-              toast.success('Updated successfully!', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-              });
-            })
-            .catch((error) => {
-              // console.error('Error updating data:', error);
-              toast.error(`Error:${error.response.message}`, {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-              });
-            });
-        } else {
-          // console.error('No knocker selected.');
-          toast.error(`Some Error Occurred`, {
-            position: 'top-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        }
-      }}} 
+      onClick={handleSaveButtonClick}
     >
       Save
     </Button>

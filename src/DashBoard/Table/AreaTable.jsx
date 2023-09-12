@@ -209,7 +209,7 @@ export default function AreaTable() {
               setArea(!area);
             }}
           >
-            Back
+            Back To List
           </Button>
 
           <div className="map-and-assign-area">
@@ -228,7 +228,7 @@ export default function AreaTable() {
                 style={{
                   width: ".5rem",
                   marginBottom: "2rem",
-                  marginLeft: "6.5rem",
+                  marginLeft: "8.5rem",
                 }}
               >
                 +
