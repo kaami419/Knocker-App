@@ -131,7 +131,7 @@ const handleFilter= ()=>{
       if (selectedPin) {
         apiUrl += `&pinId=${selectedPin.id}`;
       }
-    } else if (selectedDateRange) {
+    } else if (startDate && endDate) {
       apiUrl += `&from=${startDate}&to=${endDate}`;
     } else if (selectedKnocker) {
       apiUrl += `&userId=${selectedKnocker.value.id}`;
@@ -422,6 +422,11 @@ placeholder="Select a Pin"
     </div>
       <Paper>
         <TableContainer>
+        {rows.length === 0 ? (
+        <div className="no-data-message">No data available</div>
+      ) : (
+
+      
           <Table  aria-label="simple table">
             <TableHead style={{backgroundColor:"lightgray"}}>
               <TableRow>
@@ -462,6 +467,7 @@ placeholder="Select a Pin"
               ))}
             </TableBody>
           </Table>
+          )}
         </TableContainer>
         <TablePagination
   style={{ color: '#1565c0' }}

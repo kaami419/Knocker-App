@@ -49,3 +49,8 @@
     width: 100%;
     border: 1px solid red;
 } */
+
+.no-data-message{
+    width: 100%;
+    text-align: center;
+}
