@@ -260,7 +260,8 @@ export default function StickyHeadTable() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, rowIndex) => (
                       <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
-                        <TableCell align="left">
+                        <TableCell align="left"
+                        style={{color:"#1565c0"}}>
                           {data.length - rowIndex}
                         </TableCell>
                         {columns.map((column) => {

@@ -38,7 +38,7 @@ export default function PinsByKnockers() {
 
   const [selectedPin, setSelectedPin] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
   const [searched, setSearched] = useState(""); 
@@ -58,11 +58,12 @@ export default function PinsByKnockers() {
     startDate: "", 
     endDate: "", 
   });
+  const adjustedPage = page + 1;
 
   const [pagination, setPagination] = useState({
     total: 0,
-    limit: 10,
-    currentPage: 1,
+    // limit: 10,
+    // currentPage: 1,
   });
   // const classes = useStyles();
   
@@ -72,7 +73,11 @@ export default function PinsByKnockers() {
         axios.get('http://34.122.133.247:3001/api/knocker/all',{
         headers: {
           Authorization: `Bearer ${token}` 
-        }
+        },
+        params: {
+          page: adjustedPage, 
+          limit: rowsPerPage,
+        },
       }) 
       .then(response => {
         setKnockers(response.data.data); 
@@ -80,7 +85,7 @@ export default function PinsByKnockers() {
       .catch(error => {
         console.error('Error fetching knockers:', error);
       });
-  }, []);
+  }, [rowsPerPage]);
 
 
 
@@ -101,55 +106,9 @@ export default function PinsByKnockers() {
 
 const handleFilter= ()=>{
   const offset = page * rowsPerPage;
-  let apiUrl = `http://34.122.133.247:3001/api/pin/drop?page=${page}&limit=${rowsPerPage}`;
+  let apiUrl = `http://34.122.133.247:3001/api/pin/drop?page=${adjustedPage}&limit=${rowsPerPage}`;
   const { startDate, endDate } = selectedDateRange;
 
-
-
-    
-    // if (selectedPinName && (startDate && endDate) && selectedKnocker) {
-    
-    //   const selectedPin = pins.find((pin) => pin.name === selectedPinName);
-    //   // const selectedKnocker = knockers.find((knocker) => knocker.name === selectedKnocker);
-    //   if (selectedPin) {
-    //     apiUrl += `&userId=${selectedKnocker.value.id}&pinId=${selectedPin.id}&from=${startDate}&to=${endDate}`;
-    //     // {console.log("selectedKnocker",selectedKnocker );}
-    //   }
-    // }
-
-    // if (selectedKnocker && selectedPinName){
-    //   const selectedPin = pins.find((pin) => pin.name === selectedPinName);
-    //   if(selectedPin){
-    //     apiUrl += `&userId=${selectedKnocker.value.id}&pinId=${selectedPin.id}`;
-    //   }
-    
-    // }
-
-    // if (selectedKnocker && startDate && endDate  ){
-    //   apiUrl += `&userId=${selectedKnocker.value.id}&from=${startDate}&to=${endDate}`;
-    // }
-
-    // if (selectedPin && endDate && selectedKnocker){
-    //   const selectedPin = pins.find((pin) => pin.name === selectedPinName);
-    //   if(selectedPin){
-    //     apiUrl += `&pinId=${selectedPin.id}&from=${startDate}&to=${endDate}`;
-    //   }
-    // }
-
-    //   if (selectedKnocker) {
-    //   apiUrl += `&userId=${selectedKnocker.value.id}`;
-    // }
-
-    // if (selectedPinName) {
-    //   const selectedPin = pins.find((pin) => pin.name === selectedPinName);
-    //   if (selectedPin) {
-    //     apiUrl += `&pinId=${selectedPin.id}`;
-    //   }
-    // }
-
-    // if (startDate && endDate) {
-    //   apiUrl += `&from=${startDate}&to=${endDate}`;
-    // }
     if (selectedKnocker && selectedPinName && startDate && endDate) {
       const selectedPin = pins.find((pin) => pin.name === selectedPinName);
       if (selectedPin) {
@@ -172,7 +131,7 @@ const handleFilter= ()=>{
       if (selectedPin) {
         apiUrl += `&pinId=${selectedPin.id}`;
       }
-    } else if (startDate && endDate) {
+    } else if (selectedDateRange) {
       apiUrl += `&from=${startDate}&to=${endDate}`;
     } else if (selectedKnocker) {
       apiUrl += `&userId=${selectedKnocker.value.id}`;
@@ -197,7 +156,7 @@ const handleFilter= ()=>{
 }
 
   const fetchTableData = () => {
-    let apiUrl = `http://34.122.133.247:3001/api/pin/drop?page=${page}&limit=${rowsPerPage}`
+    let apiUrl = `http://34.122.133.247:3001/api/pin/drop?page=${adjustedPage}&limit=${rowsPerPage}`
     axios.get(apiUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -276,7 +235,7 @@ const handleFilter= ()=>{
     const offset = page * rowsPerPage;
 
   
-    axios.get( `http://34.122.133.247:3001/api/pin/drop?page=${page}&limit=${rowsPerPage}`, {
+    axios.get( `http://34.122.133.247:3001/api/pin/drop?page=${adjustedPage}&limit=${rowsPerPage}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -318,8 +277,8 @@ const handleFilter= ()=>{
   
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(1);
+    setRowsPerPage(event.target.value);
+    setPage(0);
   };
 
   const handlePinDetailsClick = (selectedPinData) => {
@@ -374,7 +333,7 @@ const handleFilter= ()=>{
       }))}
       onChange={(selectedOption) => {
         setSelectedKnocker(selectedOption); 
-        setPage(1);
+        setPage(0);
       }}
       placeholder="Select a Knocker"
     />
@@ -476,10 +435,10 @@ placeholder="Select a Pin"
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {rows.map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell style={{color:"#1565c0"}} component="th" scope="row">
-                  {row.id}
+                  {rows.length - index}
                   </TableCell>
                   <TableCell align="center" >{row.user.userName}</TableCell>
                   <TableCell align="center">{row.pin.name}</TableCell>
@@ -544,7 +503,7 @@ width:"60%",}}
   onClose={() => setIsEditModalOpen(false)}
 >
   <div className="modal-content">
-    <h2 style={{color:"#1565c0"}}>Edit Assigned To</h2>
+    <h2 style={{color:"#1565c0"}}>Assigned To</h2>
     <Select
       value={selectedKnockerPayload ? selectedKnockerPayload.knocker : null}
       onChange={(selectedOption) => {
@@ -563,7 +522,7 @@ width:"60%",}}
       }))}
       placeholder="Select an Assigned To"
     />
-    
+    <div className="btnDiv2">
     <Button
     style={{marginTop:"2rem"}}
       variant="contained"
@@ -571,8 +530,19 @@ width:"60%",}}
 
       onClick={handleSaveButtonClick}
     >
-      Save
+      Update
     </Button>
+
+    {/* <Button
+    style={{marginTop:"2rem"}}
+      variant="contained"
+      color="primary"
+
+      // onClick={}
+    >
+      Cancel
+    </Button> */}
+    </div>
   </div>
 </Modal>
 

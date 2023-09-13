@@ -81,7 +81,7 @@ export default function MapDisplay({
     polygon.setMap(null);
     setDrawingMode(null);
     setIsModalOpen(true);
-    console.log("modal opening", isModalOpen);
+    // console.log("modal opening", isModalOpen);
   };
   // console.log("shapes here before", shapes);
   useEffect(() => {
@@ -110,14 +110,14 @@ export default function MapDisplay({
   //   }
 
   // };
-  const onSaveButtonClick = () => {
+  const onSaveButtonClick = async () => {
     setIsLoading(true);
     // if (selectedShapeIndex !== null && areaName.trim() !== "") {
 
     //   const selectedShape = shapes[selectedShapeIndex];
     if (shapes.length > 0) {
       const selectedShape = shapes[0];
-      saveShapeData(areaName, selectedShape);
+      await saveShapeData(areaName, selectedShape);
       toast.success(`Area Created Successfully!`, {
         position: "top-right",
         autoClose: 3000,
@@ -173,7 +173,7 @@ export default function MapDisplay({
                   <Button
                     variant="contained"
                     color="primary"
-                    style={{ marginTop: ".5rem", marginRight: ".5rem" }}
+                    style={{ marginTop: ".5rem", marginRight: ".5rem", padding:"0.2rem 0rem"}}
                     onClick={() => setIsModalOpen(false)}
                   >
                     X
@@ -184,21 +184,24 @@ export default function MapDisplay({
                   <div className="inner-dropdownDiv">
                     <b>
                       {" "}
-                      <span style={{ color: "#1565c0" }}>Area Name: </span>{" "}
+                      <div className="headingDiv">
+                      <h3 style={{ color: "#1565c0", padding:0 }}>Enter Area Name </h3>{" "}
+                      </div>
                     </b>{" "}
                     <input
                       type="text"
-                      placeholder="Enter Area Name"
+                      placeholder="Area Name"
                       value={areaName}
                       onChange={(e) => setAreaName(e.target.value)}
                       style={{
-                        padding: "1rem 4rem",
-                        marginTop: "3rem",
+                        padding: "1rem 8.5rem",
+                        // marginTop: "1rem",
                         marginBottom: "1rem",
                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                         // marginLeft:"1rem",
                         // backgroundColor: "#1565c0",
-                        color: "#1565c0",
+                        color: "#FFFFF",
+                        textAlign:"center"
                         // borderStyle: "none",
                         // borderRadius: "1rem",
                       }}
@@ -230,23 +233,26 @@ export default function MapDisplay({
                       <CircularProgress color="inherit" size={24} />
                     </Button>
                   ) : (
+                    <div className="saveBtnDiv">
                     <Button
                       style={{
                         marginTop: "1rem",
-                        padding: ".40rem 1rem",
+                        padding: 7,
                         backgroundColor: "#1565c0",
                         color: "white",
                         borderStyle: "none",
                         borderRadius: ".2rem",
-                        marginLeft: "3rem",
+                        // marginLeft: "3.5rem",
+                        marginRight: "1.25rem"
                       }}
                       onClick={() => {
                         onSaveButtonClick();
                         setIsModalOpen(false);
                       }}
                     >
-                      Save Area
+                      Save
                     </Button>
+                    </div>
                   )}
                 </div>
               </div>

@@ -241,24 +241,25 @@ setIsLoading(true);
             {/* <p>Allow Re-Assign</p> */}
             
 <div className='PinBtnDiv'>
-<div style={{width:"45%"}}>
+<div style={{width:"40%"}}>
           
           <Button
-           sx={{ mb: 2 }}
+          style={{padding:8}}
+           sx={{ mb: 2, mt:1 }}
           //  style={{padding:"1rem, 1rem"}}
-           halfWidth
+           fullWidth
           // style={{marginBottom:"2rem"}}
             variant="contained"
             onClick={handleColorButtonClick} // Toggle color picker visibility on button click
           >
-            Select Color 
+            Select 
           </Button>
           
          
           
         </div>
             {/* <ChromePicker color={selectedColor} onChange={handleColorChange} /> */}
-<div style={{width:"45%"}}>
+<div style={{width:"40%"}}>
              {isLoading ? (
                   <Button 
                   sx={{ mb: 2 }}
@@ -284,11 +285,12 @@ setIsLoading(true);
              ) :(
               <Button
               type="submit"
-              halfWidth
+              fullWidth
               variant="contained"
-              sx={{ mb: 2 }}
+              sx={{ mb: 2, mt:1 }}
+              style={{padding:8}}
             >
-              Create This Pin
+              Create
             </Button>
              )
         )}

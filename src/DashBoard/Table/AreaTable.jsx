@@ -15,13 +15,14 @@ import TableRow from "@mui/material/TableRow";
 import MapDisplay from "../../Map/Map";
 import PreviewIcon from "@mui/icons-material/Preview";
 import RemoveRedEyeRoundedIcon from "@mui/icons-material/RemoveRedEyeRounded";
-import { Button, Modal } from "@mui/material";
+import { Button, CircularProgress, Modal } from "@mui/material";
 import "./Table.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AssignAreaToKnocker from "../../AssignArea/AssignArea";
 
 export default function AreaTable() {
+  const [total, setTotal] = useState(0);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   // const [knocker, setKnocker] = React.useState(false);
@@ -32,95 +33,120 @@ export default function AreaTable() {
   const [selectedCoordinates, setSelectedCoordinates] = React.useState([]);
   const [selectedAreaKnockers, setSelectedAreaKnockers] = useState([]);
   const [isKnockersModalOpen, setIsKnockersModalOpen] = useState(false);
-  const [idCounter, setIdCounter] = React.useState(1);
+  // const [idCounter, setIdCounter] = React.useState(1);
   const [isMapViewVisible, setIsMapViewVisible] = useState(false);
   const [selectedAreaId, setSelectedAreaId] = useState(null);
   const [isAssignAreaModalOpen, setIsAssignAreaModalOpen] = useState(false);
-  const [isAssignAreaToKnockersModalOpen, setIsAssignAreaToKnockersModalOpen] =
-    useState(false);
+  const [isAssignAreaToKnockersModalOpen, setIsAssignAreaToKnockersModalOpen] = useState(false);
   const [selectedAreaName, setSelectedAreaName] = useState("");
-  // const [selectedAreaNameId, setSelectedAreaNameId] = useState("");
-
+  const [isLoading, setIsLoading] = React.useState(false);
   const location = useLocation();
-  const req = "192.168.100.18";
+  const adjustedPage = page + 1;
+
+  // const [selectedAreaNameId, setSelectedAreaNameId] = useState("");
+  // const slicedData =data && data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+
+// const startSlice = page * rowsPerPage;
+// const endSlice = Math.min((page + 1) * rowsPerPage, total); 
+// const slicedData = data.slice(startSlice, endSlice);
+
+ 
+
 
   React.useEffect(() => {
-    axios
-      .get("http://34.122.133.247:3001/api/area", {
+   
+    // console.log("data state has changed:", data);
+  }, [data]);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://34.122.133.247:3001/api/area", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((response) => {
-        const fetchedData = response.data.data;
-        setData(fetchedData);
-        console.log("fetchedData:", fetchedData);
-        console.log("data", data);
-
-        if (fetchedData.length > 0) {
-          const dynamicColumns = Object.keys(fetchedData[0]).map((key) => {
-            if (key === "createdAt") {
-              return {
-                id: key,
-                label: "Created At",
-                minWidth: 170,
-                align: "left",
-              };
-            }
-
-            if (key === "name") {
-              return {
-                id: key,
-                label: "Area",
-                minWidth: 170,
-                align: "left",
-              };
-            }
-
-            if (key === "path") {
-              return {
-                id: key,
-                label: "Coordinates",
-                minWidth: 170,
-                align: "center",
-              };
-            }
-
+        params: {
+          page: adjustedPage, 
+          limit: rowsPerPage,
+        },
+      });
+      const fetchedData = response.data.data;
+      setData(fetchedData);
+      setTotal(response.data.total);
+      setIsLoading(false);
+    // console.log("fetchedData:", fetchedData);
+    // console.log("data", data);
+    // console.log("sliced Data", slicedData);
+    
+      if (fetchedData.length > 0) {
+        const dynamicColumns = Object.keys(fetchedData[0]).map((key) => {
+          if (key === "createdAt") {
             return {
               id: key,
-              label: key,
+              label: "Created At",
               minWidth: 170,
               align: "left",
             };
-          });
+          }
 
-          const filteredColumns = dynamicColumns.filter(
-            (column) =>
-              column.id !== "enable" &&
-              column.id !== "deleted" &&
-              column.id !== "updatedAt" &&
-              column.id !== "id" &&
-              column.id !== "path"
-          );
+          if (key === "name") {
+            return {
+              id: key,
+              label: "Area",
+              minWidth: 170,
+              align: "left",
+            };
+          }
 
-          setColumns(filteredColumns);
-          // setColumns(dynamicColumns);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, [location]);
+          if (key === "path") {
+            return {
+              id: key,
+              label: "Coordinates",
+              minWidth: 170,
+              align: "center",
+            };
+          }
+
+          return {
+            id: key,
+            label: key,
+            minWidth: 170,
+            align: "left",
+          };
+        });
+
+        const filteredColumns = dynamicColumns.filter(
+          (column) =>
+            column.id !== "enable" &&
+            column.id !== "deleted" &&
+            column.id !== "updatedAt" &&
+            column.id !== "id" &&
+            column.id !== "path"
+        );
+
+        setColumns(filteredColumns);
+        // setColumns(dynamicColumns);
+        // console.log("again data", data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    setIsLoading(true); 
+      fetchData();
+  }, [location, rowsPerPage, page]);
+
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    console.log("page", page);
+    // console.log("page", page);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
-    console.log("rows per page", rowsPerPage);
+    // console.log("rows per page", rowsPerPage);
   };
 
   // const handleEditClick = (row) => {
@@ -134,24 +160,24 @@ export default function AreaTable() {
   const navigate = useNavigate();
 
   const handleViewClick = (row) => {
-    // console.log("row",row);
+   
     const pathArray = row.path;
     const coordinates = pathArray.map((coordPair) => [
       coordPair[0],
       coordPair[1],
     ]);
-    // console.log("row", row.name);
+
     setSelectedCoordinates(coordinates);
     setSelectedAreaName(row.name);
     setIsMapViewVisible(true);
     setArea(true);
     setSelectedAreaId(row.id);
-    console.log("row name", selectedAreaId);
 
-    // console.log("coordinates", coordinates);
-    // console.log("selectedCoordinates",selectedCoordinates);
-    // navigate("/Dashboard/map");  //work on this
   };
+
+  const test=()=>{
+    console.log("this is called")
+  }
 
   const handleViewKnockersClick = async (areaId) => {
     try {
@@ -195,10 +221,14 @@ export default function AreaTable() {
   const closeAssignAreaToKnockersModal = () => {
     setIsAssignAreaToKnockersModalOpen(false);
   };
-  const slicedData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+ 
   return (
     <div>
-      {isMapViewVisible ? (
+      { isLoading ? (
+      
+      <div><CircularProgress/></div>
+    ) :
+      isMapViewVisible ? (
         <>
           <Button
             variant="contained"
@@ -214,25 +244,27 @@ export default function AreaTable() {
 
           <div className="map-and-assign-area">
             <div className="map-display">
-              <MapDisplay selectedCoordinates={selectedCoordinates} />
+              <MapDisplay selectedCoordinates={selectedCoordinates}  fetchAreas={test}/>
             </div>
             <div className="assign-area">
               {/* <KnockersModal/> */}
               <h2 style={{ color: "#1565c0", textAlign: "center" }}>
-                Selected Knockers
-              </h2>
-              <Button
+                Assign Knockers
+                <Button
                 variant="contained"
                 color="primary"
                 onClick={openAssignAreaToKnockersModal}
                 style={{
-                  width: ".5rem",
-                  marginBottom: "2rem",
-                  marginLeft: "8.5rem",
+                  width: ".25rem",
+                  // marginBottom: "2rem",
+                  marginLeft: "0.5rem",
+                  padding:".25rem, .25rem"
                 }}
               >
                 +
               </Button>
+              </h2>
+              
 
               <br></br>
               <KnockersModal
@@ -323,15 +355,18 @@ export default function AreaTable() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {slicedData.map((row, rowIndex) => (
+                  {data.map((row, rowIndex) => (
                     <TableRow
                       hover
                       role="checkbox"
                       tabIndex={-1}
                       key={rowIndex}
                     >
-                      <TableCell align="left">
-                        {data.length - rowIndex}
+                      <TableCell align="left"
+                      key={row.id}
+                      style={{color:"#1565c0"}}
+                      >
+                        {data.length - rowIndex }
                       </TableCell>
                       {columns.map((column) => {
                         const value = row[column.id];
@@ -420,7 +455,7 @@ export default function AreaTable() {
               style={{ color: "#1565c0" }}
               rowsPerPageOptions={[5, 10, 25, 100, 500, 1000]}
               component="div"
-              count={data.length}
+              count={total}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -441,207 +476,6 @@ export default function AreaTable() {
   );
 }
 
-// function KnockersModal({ isOpen, onClose, selectedAreaKnockers ,selectedAreaId, setSelectedAreaKnockers }) {
-//   const token = localStorage.getItem("token");
-
-//   const handleDeleteKnocker = async (usersAreasId) => {
-//     try {
-//       // Make an API call to remove the knocker from the area
-//       const response = await axios.delete(
-//         `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area/assign?id=${usersAreasId}`,{
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           }
-//         }
-//       );
-
-//       const updatedResponse = await axios.get(
-//         `https://arbitrary-lxvlpwp3rq-uc.a.run.app/api/area/get/users?areaId=${selectedAreaId}`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         }
-//       );
-
-//       // Update the state with the updated list of knockers
-//       setSelectedAreaKnockers(updatedResponse.data.area[0].users || []);
-//       // Handle the success response, you can update the UI or perform any necessary actions
-//       console.log("Knocker deleted successfully:", response.data);
-
-//     } catch (error) {
-//       console.error("Error deleting knocker:", error);
-//       // Handle the error, update UI or show an error message
-//     }
-//   };
-
-//   if (!isOpen) {
-//     return null;
-//   }
-
-//   if (selectedAreaKnockers.length === 0) {
-//     return(
-//     <div className="modal-backdrop">
-//       <div className="modal-content">
-//       <div
-//           className="close"
-//           style={{ display: "flex", justifyContent: "end", padding: "0" }}
-//         >
-//           <Button variant="contained" color="primary" onClick={onClose}>
-//             X
-//           </Button>
-//         </div>
-//         <div style={{textAlign:"center"}}>
-//         <h2 style={{ color: "#1565c0" }}>Knockers for Selected Area</h2>
-//        <p style={{ color: "#1565c0" }}>No Knockers Appointed to this Area</p>
-//        </div>
-//       </div>
-//     </div>
-//     )
-//   }
-
-//   return (
-//     <div className="modal-backdrop">
-//       <div className="modal-content2">
-//         <div
-//           className="close"
-//           style={{ display: "flex", justifyContent: "end", padding: "0" }}
-//         >
-//           <Button variant="contained" color="primary" onClick={onClose}>
-//             X
-//           </Button>
-//         </div>
-//         <h2 style={{ color: "#1565c0", textAlign: "center" }}>
-//           Knockers for Selected Area
-//         </h2>
-//         <div >
-//           {selectedAreaKnockers.map((knocker) => (
-
-//            <div key={knocker.id} className="knockerList">
-//            <div style={{ width: "50%" }}>{knocker.userName}</div>
-//            <div style={{ width: "50%" }}>
-//              <DeleteIcon
-//                style={{ width: "1.3rem", cursor: "pointer" }}
-//                onClick={() => handleDeleteKnocker(knocker.users_areas.id)}
-//              />
-//            </div>
-//          </div>
-
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-// function KnockersModal({
-//   isOpen,
-//   onClose,
-//   selectedAreaKnockers,
-//   setSelectedAreaKnockers,
-// }) {
-
-//   const token = localStorage.getItem("token");
-
-//   const handleDeleteKnocker = async (usersAreasId) => {
-//     try {
-//       const response = await axios.delete(
-//         `http://192.168.100.18:3001/api/area/assign?id=${usersAreasId}`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         }
-//       );
-
-//       setSelectedAreaKnockers((prevKnockers) =>
-//         prevKnockers.filter(
-//           (knocker) => knocker.users_areas.id !== usersAreasId
-//         )
-//       );
-//       toast.success('Area Unassigned to Knocker Successfully!', {
-//         position: 'top-right',
-//         autoClose: 3000,
-//         hideProgressBar: false,
-//         closeOnClick: true,
-//         pauseOnHover: true,
-//         draggable: true,
-//         progress: undefined,
-//       });
-//       console.log("Knocker deleted successfully:", response.data);
-//     } catch (error) {
-//       toast.error(`Error Deleting Knocker From This Area`, {
-//         position: 'top-right',
-//         autoClose: 5000,
-//         hideProgressBar: false,
-//         closeOnClick: true,
-//         pauseOnHover: true,
-//         draggable: true,
-//         progress: undefined,
-//       });
-//       console.error("Error deleting knocker:", error);
-//     }
-//   };
-
-//   if (!isOpen) {
-//     return null;
-//   }
-
-//   if (selectedAreaKnockers.length === 0) {
-//     return (
-//       <div className="modal-backdrop">
-//         <div className="modal-content">
-//           <div
-//             className="close"
-//             style={{ display: "flex", justifyContent: "end", padding: "0" }}
-//           >
-//             <Button variant="contained" color="primary" onClick={onClose}>
-//               X
-//             </Button>
-//           </div>
-//             <div style={{ textAlign: "center" }}>
-//             <h2 style={{ color: "#1565c0" }}>Knockers for Selected Area</h2>
-//             <p style={{ color: "#1565c0" }}>
-//               No Knockers Appointed to this Area
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="modal-backdrop">
-//       <div className="modal-content2">
-//         <div
-//           className="close"
-//           style={{ display: "flex", justifyContent: "end", padding: "0" }}
-//         >
-//           <Button variant="contained" color="primary" onClick={onClose}>
-//             X
-//           </Button>
-//         </div>
-//         <h2 style={{ color: "#1565c0", textAlign: "center" }}>
-//           Knockers for Selected Area
-//         </h2>
-//         <div style={{ display: "flex", justifyContent: "center", alignItems:"center", overflow:"scroll" }}>
-//           {selectedAreaKnockers.map((knocker) => (
-//             <div key={knocker.id} className="knockerList">
-//               <div style={{  width: "50%",color: "#1565c0", marginLeft:"1rem"}}>
-//               User Name:  {knocker.userName}
-//               </div>
-//               <div style={{ width: "50%", color: "red", textAlign:"right" }}>
-//                 <DeleteIcon
-//                   style={{ width: "1.3rem", cursor: "pointer", marginRight:"1rem", alignSelf:"center" }}
-//                   onClick={() => handleDeleteKnocker(knocker.users_areas.id)}
-//                 />
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 
 function KnockersModal({
   isOpen,
@@ -706,9 +540,9 @@ function KnockersModal({
             X
           </Button>
         </div> */}
-        {/* <h2 style={{ color: "#1565c0", textAlign: "center" }}>
-          Assigned Knockers
-        </h2> */}
+        {/* <h3 style={{ color: "#1565c0", textAlign: "center" }}>
+        Appointed Knockers
+        </h3> */}
         {selectedAreaKnockers.length === 0 ? (
           <div style={{ textAlign: "center" }}>
             <p style={{ color: "#1565c0" }}>

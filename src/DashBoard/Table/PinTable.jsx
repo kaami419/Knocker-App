@@ -70,7 +70,6 @@ export default function PinTable() {
     // setIsUpdatePinModalOpen(true);
     setSelectedPinForEdit(pinData);
 
-    // Open the UpdatePin modal
     setIsUpdatePinModalOpen(true);
   
   };
@@ -80,7 +79,6 @@ export default function PinTable() {
   };
 
   React.useEffect(() => {
-    const req = "192.168.100.18";
 
     axios
       .get(`http://34.122.133.247:3001/api/pin`, {
@@ -179,7 +177,7 @@ export default function PinTable() {
           },
         }
       );
-      console.log("Pin deleted:", response.data);
+      // console.log("Pin deleted:", response.data);  
 
       const updatedData = data.filter((pin) => pin.id !== pinData.id);
       setData(updatedData);
@@ -282,7 +280,8 @@ export default function PinTable() {
                         tabIndex={-1}
                         key={rowIndex}
                       >
-                        <TableCell align="left">
+                        <TableCell align="left"
+                        style={{color:"#1565c0"}}>
                           {data.length - rowIndex}
                         </TableCell>
 

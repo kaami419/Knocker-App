@@ -74,3 +74,18 @@
   margin-bottom: 1rem;
 }
   
+
+.headingDiv{
+  margin-left: 1.5rem;
+  width: 80%;
+  /* border: 1px solid red; */
+  text-align: left;
+}
+
+.saveBtnDiv{
+  width: 100%;
+  /* border: 1px solid blue; */
+  text-align: right;
+ 
+
+}
