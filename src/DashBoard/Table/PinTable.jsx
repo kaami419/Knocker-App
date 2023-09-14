@@ -19,6 +19,8 @@ import { useNavigate } from "react-router-dom";
 import UpdatePin from "../../Update_Components/Pins/UpdatePin";
 import { Modal } from '@mui/material';
 import LocationIcon from "../../Assets/LocationIcon";
+import {CircularProgress} from '@mui/material';
+
 
 
 export default function PinTable() {
@@ -29,11 +31,14 @@ export default function PinTable() {
   const [columns, setColumns] = React.useState([]);
   const token = localStorage.getItem("token");
   const [selectedPin, setSelectedPin] = React.useState(null);
-  const [idCounter, setIdCounter] = React.useState(1);
+  const [idCounter, setIdCounter] = React.useState(0);
   const [editingPin, setEditingPin] = React.useState(false);
   const [isUpdatePinModalOpen, setIsUpdatePinModalOpen] = React.useState(false);
   const [selectedRowData, setSelectedRowData] = React.useState(null);
   const [selectedPinForEdit, setSelectedPinForEdit] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  
   // const [tableData, setTableData] = React.useState([]);
 
 
@@ -79,6 +84,7 @@ export default function PinTable() {
   };
 
   React.useEffect(() => {
+    setIsLoading(true)
 
     axios
       .get(`http://34.122.133.247:3001/api/pin`, {
@@ -89,6 +95,7 @@ export default function PinTable() {
       .then((response) => {
         const fetchedData = response.data.data;
         setData(fetchedData);
+        setIdCounter(idCounter + fetchedData.length);
         // console.log("fetchedData:",fetchedData );
 
         if (fetchedData.length > 0) {
@@ -151,10 +158,14 @@ export default function PinTable() {
 
           setColumns(filteredColumns);
           // setColumns(dynamicColumns);
+    setIsLoading(false)
+
         }
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
+    setIsLoading(false)
+
       });
   }, []);
 
@@ -210,7 +221,13 @@ export default function PinTable() {
 
   return (
     <div>
-      {pin ? (
+      {isLoading?(
+        <div>
+          <CircularProgress/>
+        </div>
+      ):
+      
+      pin ? (
         <CreatePin selectedPin={selectedPin} editingPin={editingPin} />
       ) : (
         <div>
@@ -282,7 +299,7 @@ export default function PinTable() {
                       >
                         <TableCell align="left"
                         style={{color:"#1565c0"}}>
-                          {data.length - rowIndex}
+                         {idCounter - page * rowsPerPage - rowIndex}
                         </TableCell>
 
                         {/* {columns.map((column) => {

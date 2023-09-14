@@ -22,6 +22,8 @@ import EditIcon from "@mui/icons-material/Edit";
 // import svgPath from "../../public/LocationIcon(2).svg"
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {CircularProgress} from '@mui/material';
+
 
 
 
@@ -47,17 +49,24 @@ export default function PinsByKnockers() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [ selectedKnockerForEdit, setSelectedKnockerForEdit] = useState(null);
   const [selectedKnockerPayload, setSelectedKnockerPayload] = useState(null);
-
+  const [uniqueIdCounter, setUniqueIdCounter] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const [knockers, setKnockers] = useState([]);
   const [selectedKnocker, setSelectedKnocker] = useState('');
   const [pins, setPins] = useState([]);
   const [selectedPinName, setSelectedPinName] = useState('');
   const [userId, setUserId] = useState(null); 
+  const [isLoading, setIsLoading] = React.useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState({
     startDate: "", 
     endDate: "", 
   });
+ 
+
+  const initialPage = 0; 
+const [currentPage, setCurrentPage] = useState(initialPage);
+
+
   const adjustedPage = page + 1;
 
   const [pagination, setPagination] = useState({
@@ -69,6 +78,8 @@ export default function PinsByKnockers() {
   
 
   useEffect(() => {
+    setIsLoading(true)
+
        
         axios.get('http://34.122.133.247:3001/api/knocker/all',{
         headers: {
@@ -81,9 +92,13 @@ export default function PinsByKnockers() {
       }) 
       .then(response => {
         setKnockers(response.data.data); 
+    setIsLoading(false)
+
       })
       .catch(error => {
         console.error('Error fetching knockers:', error);
+    setIsLoading(false)
+
       });
   }, [rowsPerPage]);
 
@@ -137,6 +152,7 @@ const handleFilter= ()=>{
       apiUrl += `&userId=${selectedKnocker.value.id}`;
     }
     
+    setIsLoading(true)
 
   axios.get(apiUrl, {
     headers: {
@@ -146,16 +162,22 @@ const handleFilter= ()=>{
     .then(response => {
       const apiData = response.data.data;
       setRows(apiData);
+    setIsLoading(false)
+
       // console.log("apiData", apiData[0].pin.image);
       const total = response.data.total;
       setPagination(prevPagination => ({ ...prevPagination, total }));
     })
     .catch(error => {
       console.error("Error fetching data:", error);
+    setIsLoading(false)
+
     });
 }
 
   const fetchTableData = () => {
+    setIsLoading(true)
+
     let apiUrl = `http://34.122.133.247:3001/api/pin/drop?page=${adjustedPage}&limit=${rowsPerPage}`
     axios.get(apiUrl, {
       headers: {
@@ -166,10 +188,16 @@ const handleFilter= ()=>{
         const apiData = response.data.data;
         setRows(apiData);
         const total = response.data.total;
+        const startingId = (total - (adjustedPage * rowsPerPage)) + 1;
+        setUniqueIdCounter(startingId);
         setPagination(prevPagination => ({ ...prevPagination, total }));
+    setIsLoading(false)
+
       })
       .catch(error => {
         console.error("Error fetching data:", error);
+    setIsLoading(false)
+
       });
   };
 
@@ -185,7 +213,6 @@ const handleFilter= ()=>{
             },
           })
           .then((response) => {
-            // console.log('Data updated successfully:', response.data);
             setIsEditModalOpen(false);
             fetchTableData();
             toast.success('Updated successfully!', {
@@ -199,8 +226,6 @@ const handleFilter= ()=>{
             });
           })
           .catch((error) => {
-            // console.error('Error updating data:', error);
-
             toast.error(`Error: ${error.response.data.message}`, {
               position: 'top-right',
               autoClose: 3000,
@@ -227,10 +252,6 @@ const handleFilter= ()=>{
    
   };
 
-
-// handle filter yaha end ho rha hai
-
-
   useEffect(() => {
     const offset = page * rowsPerPage;
 
@@ -244,6 +265,10 @@ const handleFilter= ()=>{
         const apiData = response.data.data;
         setRows(apiData);
         const total = response.data.total;
+        const startingId = (total - (adjustedPage * rowsPerPage)) + 10;
+        // console.log("mul", (adjustedPage * rowsPerPage));
+        // console.log("startingId", startingId);
+        setUniqueIdCounter(startingId);
         setPagination(prevPagination => ({ ...prevPagination, total }));
       })
       .catch(error => {
@@ -273,6 +298,12 @@ const handleFilter= ()=>{
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    // setUniqueIdCounter(newPage * rowsPerPage + 1);
+    setCurrentPage(newPage);
+
+    // Calculate the starting ID for the current page
+    // const startingId = (pagination.total - ((newPage + 1) * rowsPerPage)) + rowsPerPage;
+    // setUniqueIdCounter(startingId);
   };
   
 
@@ -294,9 +325,13 @@ const handleFilter= ()=>{
   };
 
   const resetFilters = () => {
+    setIsLoading(true)
     setSelectedKnocker(''); 
     setSelectedPinName(''); 
     setSelectedDateRange({ startDate: '', endDate: '' }); 
+    setIsLoading(false)
+
+    
   };
 
  
@@ -309,8 +344,14 @@ const handleFilter= ()=>{
   // };
 
   return (
+ <>
+    {isLoading? (
+      <div>
+        <CircularProgress/>
+      </div>
+    ):
     <>
-    <div className="searchDiv">
+ <div className="searchDiv">
       <div style={{width:"33%"}}>
 
       {knockers.length > 0 && (
@@ -423,7 +464,7 @@ placeholder="Select a Pin"
       <Paper>
         <TableContainer>
         {rows.length === 0 ? (
-        <div className="no-data-message">No data available</div>
+        <div className="no-data-message"><b><h2 style={{color:"#1565c0"}}>No data available</h2></b></div>
       ) : (
 
       
@@ -443,7 +484,7 @@ placeholder="Select a Pin"
               {rows.map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell style={{color:"#1565c0"}} component="th" scope="row">
-                  {rows.length - index}
+                  {uniqueIdCounter - index}
                   </TableCell>
                   <TableCell align="center" >{row.user.userName}</TableCell>
                   <TableCell align="center">{row.pin.name}</TableCell>
@@ -551,11 +592,11 @@ width:"60%",}}
     </div>
   </div>
 </Modal>
+  </>
 
 
-
-
-
-    </>
+}
+</>
+  
   );
 }

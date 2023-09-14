@@ -37,26 +37,20 @@ export default function AreaTable() {
   const [isMapViewVisible, setIsMapViewVisible] = useState(false);
   const [selectedAreaId, setSelectedAreaId] = useState(null);
   const [isAssignAreaModalOpen, setIsAssignAreaModalOpen] = useState(false);
-  const [isAssignAreaToKnockersModalOpen, setIsAssignAreaToKnockersModalOpen] = useState(false);
+  const [isAssignAreaToKnockersModalOpen, setIsAssignAreaToKnockersModalOpen] =useState(false);
   const [selectedAreaName, setSelectedAreaName] = useState("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const [check, setCheck] = React.useState(true);
+  const [centerCoordinates, setCenterCoordinates] = useState([]);
+
+
   const location = useLocation();
   const adjustedPage = page + 1;
 
-  // const [selectedAreaNameId, setSelectedAreaNameId] = useState("");
-  // const slicedData =data && data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
-
-// const startSlice = page * rowsPerPage;
-// const endSlice = Math.min((page + 1) * rowsPerPage, total); 
-// const slicedData = data.slice(startSlice, endSlice);
-
- 
-
-
   React.useEffect(() => {
-   
     // console.log("data state has changed:", data);
   }, [data]);
+
   const fetchData = async () => {
     try {
       const response = await axios.get("http://34.122.133.247:3001/api/area", {
@@ -64,7 +58,7 @@ export default function AreaTable() {
           Authorization: `Bearer ${token}`,
         },
         params: {
-          page: adjustedPage, 
+          page: adjustedPage,
           limit: rowsPerPage,
         },
       });
@@ -72,10 +66,7 @@ export default function AreaTable() {
       setData(fetchedData);
       setTotal(response.data.total);
       setIsLoading(false);
-    // console.log("fetchedData:", fetchedData);
-    // console.log("data", data);
-    // console.log("sliced Data", slicedData);
-    
+
       if (fetchedData.length > 0) {
         const dynamicColumns = Object.keys(fetchedData[0]).map((key) => {
           if (key === "createdAt") {
@@ -132,11 +123,9 @@ export default function AreaTable() {
   };
 
   React.useEffect(() => {
-    setIsLoading(true); 
-      fetchData();
-  }, [location, rowsPerPage, page]);
-
-
+    setIsLoading(true);
+    fetchData();
+  }, [rowsPerPage, page]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -159,25 +148,42 @@ export default function AreaTable() {
 
   const navigate = useNavigate();
 
+  function calculateCenterCoordinates(coordinates) {
+    if (coordinates.length === 0) {
+      return null; // Return null if there are no coordinates
+    }
+  
+    let totalLat = 0;
+    let totalLng = 0;
+  
+    for (const [lat, lng] of coordinates) {
+      totalLat += lat;
+      totalLng += lng;
+    }
+  
+    const centerLat = totalLat / coordinates.length;
+    const centerLng = totalLng / coordinates.length;
+  
+    return [centerLat, centerLng];
+  }
+
   const handleViewClick = (row) => {
-   
     const pathArray = row.path;
     const coordinates = pathArray.map((coordPair) => [
       coordPair[0],
       coordPair[1],
     ]);
 
+    const centerCoordinates = calculateCenterCoordinates(coordinates);
+
     setSelectedCoordinates(coordinates);
     setSelectedAreaName(row.name);
     setIsMapViewVisible(true);
+    // setCheck(true)
     setArea(true);
     setSelectedAreaId(row.id);
-
+    setCenterCoordinates(centerCoordinates);
   };
-
-  const test=()=>{
-    console.log("this is called")
-  }
 
   const handleViewKnockersClick = async (areaId) => {
     try {
@@ -221,19 +227,19 @@ export default function AreaTable() {
   const closeAssignAreaToKnockersModal = () => {
     setIsAssignAreaToKnockersModalOpen(false);
   };
- 
+
   return (
     <div>
-      { isLoading ? (
-      
-      <div><CircularProgress/></div>
-    ) :
-      isMapViewVisible ? (
+      {isLoading ? (
+        <div>
+          <CircularProgress />
+        </div>
+      ) : isMapViewVisible ? (
         <>
           <Button
             variant="contained"
             color="primary"
-            style={{marginBottom:"1rem"}}
+            style={{ marginBottom: "1rem" }}
             onClick={() => {
               setIsMapViewVisible(!isMapViewVisible);
               setArea(!area);
@@ -244,27 +250,30 @@ export default function AreaTable() {
 
           <div className="map-and-assign-area">
             <div className="map-display">
-              <MapDisplay selectedCoordinates={selectedCoordinates}  fetchAreas={test}/>
+              <MapDisplay
+                selectedCoordinates={selectedCoordinates}
+                check={check}
+                centerCoordinates={centerCoordinates}
+              />
             </div>
             <div className="assign-area">
               {/* <KnockersModal/> */}
               <h2 style={{ color: "#1565c0", textAlign: "center" }}>
                 Assign Knockers
                 <Button
-                variant="contained"
-                color="primary"
-                onClick={openAssignAreaToKnockersModal}
-                style={{
-                  width: ".25rem",
-                  // marginBottom: "2rem",
-                  marginLeft: "0.5rem",
-                  padding:".25rem, .25rem"
-                }}
-              >
-                +
-              </Button>
+                  variant="contained"
+                  color="primary"
+                  onClick={openAssignAreaToKnockersModal}
+                  style={{
+                    width: ".25rem",
+                    // marginBottom: "2rem",
+                    marginLeft: "0.5rem",
+                    padding: ".25rem, .25rem",
+                  }}
+                >
+                  +
+                </Button>
               </h2>
-              
 
               <br></br>
               <KnockersModal
@@ -292,23 +301,21 @@ export default function AreaTable() {
           </div>
         </>
       ) : area ? (
-        <MapDisplay selectedCoordinates={selectedCoordinates} />
+        <MapDisplay selectedCoordinates={selectedCoordinates} check={check} />
       ) : (
         <div>
           <div className="tableBtnDiv">
-            {/* <NavLink to={'./createKnocker'}> */}
+
             <Button
               variant="contained"
               color="primary"
               onClick={() => {
-                setArea(!area);
+                // setArea(!area);
                 navigate("/Dashboard/map");
               }}
             >
               Create Area
             </Button>
-
-            {/* </NavLink> */}
           </div>
           <Paper sx={{ width: "100%", overflow: "hidden" }}>
             <TableContainer sx={{ maxHeight: 550 }}>
@@ -346,12 +353,6 @@ export default function AreaTable() {
                     >
                       View
                     </TableCell>
-                    {/* <TableCell
-                      align="left"
-                      style={{ color: "#1565c0", backgroundColor: "lightgray" }}
-                    >
-                      Knockers
-                    </TableCell> */}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -362,11 +363,12 @@ export default function AreaTable() {
                       tabIndex={-1}
                       key={rowIndex}
                     >
-                      <TableCell align="left"
-                      key={row.id}
-                      style={{color:"#1565c0"}}
+                      <TableCell
+                        align="left"
+                        key={row.id}
+                        style={{ color: "#1565c0" }}
                       >
-                        {data.length - rowIndex }
+                        {total - page * rowsPerPage - rowIndex}
                       </TableCell>
                       {columns.map((column) => {
                         const value = row[column.id];
@@ -405,14 +407,7 @@ export default function AreaTable() {
                               <TableCell key={column.id} align="center">
                                 {formattedDate}
                               </TableCell>
-                              {/* <TableCell>
-                <button
-                  onClick={() => handleEditClick(row)}
-                  style={{ color: '#1565c0', cursor: 'pointer', border: 'none', background: 'none' }}
-                >
-                  Edit
-                </button>
-              </TableCell> */}
+
                               <TableCell style={{ paddingRight: "4rem" }}>
                                 <RemoveRedEyeRoundedIcon
                                   onClick={() => {
@@ -437,15 +432,7 @@ export default function AreaTable() {
                           </TableCell>
                         );
                       })}
-                      {/* <TableCell>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handleViewKnockersClick(row.id)}
-                          >
-                            Knockers
-                          </Button>
-                        </TableCell> */}
+
                     </TableRow>
                   ))}
                 </TableBody>
@@ -475,7 +462,6 @@ export default function AreaTable() {
     </div>
   );
 }
-
 
 function KnockersModal({
   isOpen,
@@ -532,17 +518,6 @@ function KnockersModal({
   return (
     <div>
       <div>
-        {/* <div
-          
-          style={{ display: "flex", justifyContent: "end", padding: "0" }}
-        >
-          <Button variant="contained" color="primary" onClick={onClose}>
-            X
-          </Button>
-        </div> */}
-        {/* <h3 style={{ color: "#1565c0", textAlign: "center" }}>
-        Appointed Knockers
-        </h3> */}
         {selectedAreaKnockers.length === 0 ? (
           <div style={{ textAlign: "center" }}>
             <p style={{ color: "#1565c0" }}>
@@ -571,6 +546,8 @@ function KnockersModal({
                   <td style={{ width: "50%", color: "#1565c0" }}>
                     {knocker.userName}
                   </td>
+                  
+                  {/* <td></td> */}
                   <td
                     style={{ width: "50%", color: "red", textAlign: "right" }}
                   >

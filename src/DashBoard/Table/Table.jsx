@@ -12,10 +12,12 @@ import UserSignUp from '../../Auth/User/Signup/signUp';
 import { Button } from '@mui/material';
 import './Table.css'
 import EditIcon from '@mui/icons-material/Edit';
-import { Modal } from '@mui/material';
+import { Modal , CircularProgress} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import MapDisplay from '../../Map/Map';
 import UpdateKnocker from '../../Update_Components/Knockers/UpdateKnocker';
+import { RemoveRedEyeRounded } from '@mui/icons-material';
+// import CircularProgress from '@mui/material';
 
 // import areaTable from './AreaTable';
 // import PreRegisterationTable from './PreRegisterationTable'; 
@@ -34,6 +36,7 @@ export default function StickyHeadTable() {
   const [showMapView, setShowMapView] = React.useState(false);
   const [idCounter, setIdCounter] = React.useState(1);
   const [editingPin, setEditingPin] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   // const [showCoordinates, setShowCoordinates]= React.useState(false)
   const [formData, setFormData] = React.useState({
@@ -65,8 +68,7 @@ export default function StickyHeadTable() {
 
 
   React.useEffect(() => {
-    const req = "192.168.100.18"
-
+    setIsLoading(true)
     axios.get('http://34.122.133.247:3001/api/knocker/all', {
       headers: {
         Authorization: `Bearer ${token}`
@@ -151,11 +153,14 @@ export default function StickyHeadTable() {
           ));
 
           setColumns(filteredColumns);
+          setIsLoading(false)
           // setColumns(dynamicColumns);
         }
       })
       .catch(error => {
+
         console.error('Error fetching data:', error);
+        setIsLoading(false)
       });
   }, []);
 
@@ -183,7 +188,7 @@ export default function StickyHeadTable() {
       });
 
       const userAreas = response.data.knocker.areas;
-      // console.log("userAreas:", userAreas);
+      console.log("userAreas:", userAreas);
       setUserAreas(userAreas);
       setShowMapView(true);
       setIsModalOpen(true);
@@ -207,7 +212,12 @@ export default function StickyHeadTable() {
     <div>
 
 
-      {knocker ?
+      {isLoading? (
+       <div>
+          <CircularProgress />
+        </div>
+      ):
+      knocker ?
         <UserSignUp selectedUser={selectedUser} editingPin={editingPin} />
 
         :
@@ -262,7 +272,7 @@ export default function StickyHeadTable() {
                       <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
                         <TableCell align="left"
                         style={{color:"#1565c0"}}>
-                          {data.length - rowIndex}
+                            {data.length - page * rowsPerPage - rowIndex}
                         </TableCell>
                         {columns.map((column) => {
                           const value = row[column.id];
@@ -297,7 +307,15 @@ export default function StickyHeadTable() {
                           </EditIcon>
                         </TableCell>
                         <TableCell>
-                          <Button
+                          <RemoveRedEyeRounded
+                          style={{color:"#1565c0"}}
+                          onClick={() => {
+                            // setSelectedUser(row);
+                            // setIsModalOpen(true);
+                            handleViewAreas(row)
+                          }}
+                          />
+                          {/* <Button
                             variant="contained"
                             color="primary"
                             onClick={() => {
@@ -307,7 +325,7 @@ export default function StickyHeadTable() {
                             }}
                           >
                             View
-                          </Button>
+                          </Button> */}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -366,27 +384,41 @@ export default function StickyHeadTable() {
 function AreasModal({ user, userAreas, isOpen, onClose, setShowMapView, showMapView, setIsModalOpen, show = true }) {
   const [showCoordinates, setShowCoordinates] = React.useState(false);
 
+  
+
   const handleViewCoordinates = () => {
     setShowCoordinates(true);
     setShowMapView(true);
   }
 
   return (
-    <Modal style={{ marginBottom: "2rem" }} open={isOpen} onClose={onClose}>
+    <Modal  open={isOpen} onClose={onClose}>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div className="modal-content" >
+          <div className='xBtn'>
           <Button variant='contained' color='primary' onClick={() => { setIsModalOpen(false) }}>X</Button>
+          </div>
+          <div className='TableModalDiv'>
+          <div className='NamesDiv'>
           <h2 style={{ color: "#1565c0", textAlign: "center" }}>Areas for {user.firstName} {user.lastName}</h2>
-          <ul>
+          {/* <ul> */}
+          <div className='modalDiv' style={{ display: "flex", alignItems: "center", justifyContent:"center" }}>
             {userAreas.map((area) => (
-              <div key={area.id} className='modalDiv' style={{ display: "flex", alignItems: "center", flexDirection: "column", marginBlockEnd: "2rem" }}>
-                <b><li style={{ listStyle: "number", color: "#1565c0", fontSize: "2.5vh" }}>{area.name}</li></b>
-                {/* <li style={{ listStyle: "none", color: "#1565c0", wordWrap: "normal", overflow: "hidden" }}>{area.path}</li> */}
-              </div>
+                <p key={area.id} style={{ color: "#1565c0", fontSize: "2.5vh", margin:"1rem" }}>{area.name}</p>
             ))}
-          </ul>
+               </div>
+          {/* </ul> */}
+          </div>
+          <div className='MapDisplayDiv'>
           {showMapView && userAreas.length > 0 ? (
-            <MapDisplay selectedCoordinates={userAreas[0].path} showAreaSelection={show} />
+             
+              <MapDisplay
+                key={userAreas.map(e=>e.id)} 
+                selectedCoordinates={userAreas.map(e=>e.path)}
+                showAreaSelection={show}
+              />
+            
+            // <MapDisplay selectedCoordinates={userAreas.map(area => area.path).flat()} showAreaSelection={show} />
             //           <div>
             //   {userAreas.map((area, index) => (
             //     <MapDisplay key={area.id} selectedCoordinates={area.path} showAreaSelection={show} />
@@ -398,6 +430,8 @@ function AreasModal({ user, userAreas, isOpen, onClose, setShowMapView, showMapV
               <p>No Area available for this Knocker</p>
             </div>
           )}
+          </div>
+          </div>
         </div>
       </div>
     </Modal>

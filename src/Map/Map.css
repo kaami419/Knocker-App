@@ -1,13 +1,16 @@
 .map-container{
     width: 100%;
-    height: 80vh;
+    height: 45rem
+}
+.modal{
+  color: white;
 }
 
 .container {
     /* display: flex; */
     width: 100%;
     /* height:70vh; */
-    margin-bottom: 3rem;
+    /* margin-bottom: 3rem; */
   }
   
   .dropdown {
@@ -38,7 +41,7 @@
     left: 25%;
     width: 50%;
     background-color: white;
-    min-height: 50vh;
+    /* min-height: 50vh; */
 
 
   }

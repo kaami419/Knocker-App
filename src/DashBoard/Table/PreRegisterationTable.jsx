@@ -9,6 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import UserSignUp from '../../Auth/User/Signup/signUp';
+import {CircularProgress} from '@mui/material';
 
 export default function PreRegisterationTable() {
   const [page, setPage] = React.useState(0);
@@ -17,11 +18,13 @@ export default function PreRegisterationTable() {
   const [data, setData] = React.useState([]); 
   const [columns, setColumns] = React.useState([]);
   const [idCounter, setIdCounter] = React.useState(1);
+  const [isLoading, setIsLoading] = React.useState(false);
+
  
   const token = localStorage.getItem('token');
 
   React.useEffect(() => {
-const req= "192.168.100.18"
+    setIsLoading(true)
     
     axios.get('http://34.122.133.247:3001/api/knocker/pre/registration', {
       headers: {
@@ -72,10 +75,12 @@ const req= "192.168.100.18"
           ));
   
           setColumns(filteredColumns);
+          setIsLoading(false)
           // setColumns(dynamicColumns); 
         }
       })
       .catch(error => {
+        setIsLoading(false);
         console.error('Error fetching data:', error);
       });
   }, []);
@@ -91,7 +96,12 @@ const req= "192.168.100.18"
 
   return (
     <div>
-      {knocker ? 
+      {isLoading? (
+      <div>
+        <CircularProgress/>
+      </div>
+      ):
+      knocker ? 
         <UserSignUp/>
         :
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -168,7 +178,7 @@ const req= "192.168.100.18"
                     <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
                           <TableCell align="left"
                           style={{color:"#1565c0"}}>
-                          {data.length - rowIndex}
+                        {data.length - page * rowsPerPage - rowIndex}
       </TableCell>  
                       {columns.map((column) => {
                         const value = row[column.id];
