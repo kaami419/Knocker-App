@@ -181,7 +181,8 @@ setIsLoading(true);
            <Button variant='contained' color='primary' onClick={()=>{setPin(!pin); navigate("/Dashboard/pins")}}>View Pins Listing</Button>
            </div> */}
     <ThemeProvider theme={defaultTheme} >
-      <Container component="main" maxWidth="xs" style={{backgroundColor:"white"}}>
+      <Container component="main" maxWidth="xs" style={{backgroundColor:"white"
+    , borderRadius:"1rem", paddingBottom:"2rem"}}>
         <CssBaseline />
         <Box
           sx={{
@@ -262,13 +263,12 @@ setIsLoading(true);
 <div style={{width:"40%"}}>
              {isLoading ? (
                   <Button 
-                  sx={{ mb: 2 }}
-                  //  style={{padding:"1rem, 1rem"}}
+                  sx={{ mb: 2 , mt:1}}
                    halfWidth
-                  // style={{marginBottom:"2rem"}}
                     variant="contained"
+                    // style={{padding:8}}
                   >   
-          <CircularProgress color="inherit" size={50} /> 
+         Creating <CircularProgress color="inherit" size={25} style={{marginLeft:".25rem"}} /> 
           </Button>
         ) : (
              editingPin? (

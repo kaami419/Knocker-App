@@ -8,6 +8,7 @@
 
 }
 
+
 .AssignAreaDiv{
     /* display: flex; */
     position: absolute;
@@ -20,7 +21,7 @@
     /* border: 1px solid red; */
     /* background-color: white; */
     /* position: relative; */
-    border-radius: .5rem;
+    border-radius: 1rem;
 }
 
 .SubDiv{

@@ -40,8 +40,9 @@ width: 100%;
     /* transform: translate(-50%, -50%); */
     background-color: white;
     padding: 50px;
-    border-radius: 5px;
+    border-radius: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
     /* margin-bottom: 10rem; */
   }
 
@@ -85,10 +86,10 @@ width: 100%;
       /* transform: translate(-50%, -50%); */
       background-color: white;
       padding: 50px;
-      border-radius: 5px;
+      border-radius: 1rem;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       position: absolute;
-      top: 25%;
+      top: 22.5%;
       left: 25%;
       /* margin-bottom: 10rem; */
     }

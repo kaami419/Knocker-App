@@ -145,7 +145,7 @@ import 'react-toastify/dist/ReactToastify.css';
     },[selectedAreaName])
 
     return (
-      <div className='container'>
+      <div className='container10'>
       
 
       <div className='AssignAreaDiv'>
